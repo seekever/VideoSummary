@@ -3,6 +3,7 @@
 import unittest
 
 from video_summary.context.general_context import GeneralContext, ResumeMode
+from video_summary.context.objects_context import ObjectsContext
 from video_summary.context.scenes_context import ScenesContext
 
 
@@ -40,6 +41,33 @@ class GeneralContextTest(unittest.TestCase):
         with ScenesContext() as manager:
             self.assertEqual([13, 24], manager.scenes_list[1])
             self.assertEqual([46, 60], manager.scenes_list[3])
+
+    def test_objects_context(self):
+        """Unit test that test that objects context works."""
+        with ObjectsContext() as manager:
+            manager.objects_list = ['dog', 'cat', 'car']
+            manager.optimization = False
+            manager.milliseconds_periodicity = 200
+            manager.scenes_periodicity = 3
+
+        with ObjectsContext() as manager:
+            self.assertEqual('car', manager.objects_list[2])
+            self.assertFalse(manager.optimization)
+            self.assertEqual(200, manager.milliseconds_periodicity)
+            self.assertEqual(3, manager.scenes_periodicity)
+
+            manager.objects_list[2] = 'tree'
+            manager.objects_list.append('house')
+            manager.optimization = True
+            manager.milliseconds_periodicity += 100
+            manager.scenes_periodicity -= 1
+
+        with ObjectsContext() as manager:
+            self.assertEqual('tree', manager.objects_list[2])
+            self.assertEqual('house', manager.objects_list[3])
+            self.assertTrue(manager.optimization)
+            self.assertEqual(300, manager.milliseconds_periodicity)
+            self.assertEqual(2, manager.scenes_periodicity)
 
 
 if __name__ == '__main__':
