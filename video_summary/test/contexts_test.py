@@ -1,7 +1,9 @@
 """Unit tests that test that contexts work."""
+
 import unittest
 
 from video_summary.context.general_context import GeneralContext, ResumeMode
+from video_summary.context.scenes_context import ScenesContext
 
 
 class GeneralContextTest(unittest.TestCase):
@@ -23,6 +25,21 @@ class GeneralContextTest(unittest.TestCase):
         with GeneralContext() as manager:
             self.assertEqual(ResumeMode.OBJECTS, manager.resume_mode)
             self.assertFalse(manager.detect_scenes)
+
+    def test_scenes_context(self):
+        """Unit test that test that scenes context works."""
+        with ScenesContext() as manager:
+            manager.scenes_list = [[0, 10], [11, 25], [26, 45]]
+
+        with ScenesContext() as manager:
+            self.assertEqual([11, 25], manager.scenes_list[1])
+
+            manager.scenes_list[1] = [13, 24]
+            manager.scenes_list.append([46, 60])
+
+        with ScenesContext() as manager:
+            self.assertEqual([13, 24], manager.scenes_list[1])
+            self.assertEqual([46, 60], manager.scenes_list[3])
 
 
 if __name__ == '__main__':
