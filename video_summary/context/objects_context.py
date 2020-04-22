@@ -8,6 +8,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(ROOT_DIR, 'ObjectsConfig.conf')
 
 # Strings for JSON
+OBJECTS_DICT = "objectsDict"
 OBJECTS_LIST = "objectsList"
 OPTIMIZATION = "optimization"
 MILLISECONDS_PERIODICITY = "millisecondsPeriodicity"
@@ -24,6 +25,8 @@ class ObjectsContext:
     ----------
     config : dict
         a dict with all the general settings
+    objects_dict : dict
+        a dict with all the objects appearances times in milliseconds
     objects_list : list
         a string list with objects to search
     optimization : bool
@@ -37,6 +40,7 @@ class ObjectsContext:
 
     def __init__(self):
         self.config = None
+        self.objects_dict = None
         self.objects_list = None
         self.optimization = None
         self.milliseconds_periodicity = None
@@ -50,6 +54,7 @@ class ObjectsContext:
         except FileNotFoundError:
             self.config = {}
 
+        self.objects_dict = self.config.get(OBJECTS_DICT)
         self.objects_list = self.config.get(OBJECTS_LIST)
         self.optimization = self.config.get(OPTIMIZATION)
         self.milliseconds_periodicity = self.config.get(MILLISECONDS_PERIODICITY)
@@ -58,12 +63,13 @@ class ObjectsContext:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        self.config[OBJECTS_DICT] = self.objects_dict
         self.config[OBJECTS_LIST] = self.objects_list
         self.config[OPTIMIZATION] = self.optimization
         self.config[MILLISECONDS_PERIODICITY] = self.milliseconds_periodicity
         self.config[SCENES_PERIODICITY] = self.scenes_periodicity
 
-        json_string = json.dumps(self.config)
+        json_string = json.dumps(self.config, indent=4)
 
         with open(CONFIG_PATH, 'w') as json_file:
             json_file.write(json_string)

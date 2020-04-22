@@ -45,7 +45,7 @@ class ScenesContext:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.config[SCENES_LIST] = self.scenes_list
 
-        json_string = json.dumps(self.config)
+        json_string = json.dumps(self.config, indent=4)
 
         with open(CONFIG_PATH, 'w') as json_file:
             json_file.write(json_string)

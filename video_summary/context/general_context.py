@@ -32,8 +32,8 @@ class GeneralContext:
     ----------
     config : dict
         a dict with all the general settings
-    resume_mode : str
-        the resume mode (Subtitles, Objects or Subtitles and objects)
+    resume_mode : int
+        the resume mode (class ResumeMode)
     detect_scenes : bool
         a boolean to activate the scene detection
 
@@ -61,7 +61,7 @@ class GeneralContext:
         self.config[RESUME_MODE] = self.resume_mode
         self.config[DETECT_SCENES] = self.detect_scenes
 
-        json_string = json.dumps(self.config)
+        json_string = json.dumps(self.config, indent=4)
 
         with open(CONFIG_PATH, 'w') as json_file:
             json_file.write(json_string)

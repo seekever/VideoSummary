@@ -45,17 +45,22 @@ class GeneralContextTest(unittest.TestCase):
     def test_objects_context(self):
         """Unit test that test that objects context works."""
         with ObjectsContext() as manager:
+            manager.objects_dict = {"dog": [10, 23, 45], "cat": [5, 41]}
             manager.objects_list = ['dog', 'cat', 'car']
             manager.optimization = False
             manager.milliseconds_periodicity = 200
             manager.scenes_periodicity = 3
 
         with ObjectsContext() as manager:
+            self.assertEqual([5, 41], manager.objects_dict["cat"])
             self.assertEqual('car', manager.objects_list[2])
             self.assertFalse(manager.optimization)
             self.assertEqual(200, manager.milliseconds_periodicity)
             self.assertEqual(3, manager.scenes_periodicity)
 
+            manager.objects_dict["dog"].remove(23)
+            manager.objects_dict["tree"] = [7, 33]
+            manager.objects_dict["tree"].append(45)
             manager.objects_list[2] = 'tree'
             manager.objects_list.append('house')
             manager.optimization = True
@@ -63,6 +68,8 @@ class GeneralContextTest(unittest.TestCase):
             manager.scenes_periodicity -= 1
 
         with ObjectsContext() as manager:
+            self.assertEqual([10, 45], manager.objects_dict["dog"])
+            self.assertEqual([7, 33, 45], manager.objects_dict["tree"])
             self.assertEqual('tree', manager.objects_list[2])
             self.assertEqual('house', manager.objects_list[3])
             self.assertTrue(manager.optimization)
