@@ -5,6 +5,8 @@ import unittest
 from video_summary.context.general_context import GeneralContext, ResumeMode
 from video_summary.context.objects_context import ObjectsContext
 from video_summary.context.scenes_context import ScenesContext
+from video_summary.context.subtitles_context import SubtitlesContext, VectoringType, Languages
+from video_summary.objects.subtitle import Subtitle
 
 
 class GeneralContextTest(unittest.TestCase):
@@ -75,6 +77,61 @@ class GeneralContextTest(unittest.TestCase):
             self.assertTrue(manager.optimization)
             self.assertEqual(300, manager.milliseconds_periodicity)
             self.assertEqual(2, manager.scenes_periodicity)
+
+    def test_subtitles_context(self):
+        """Unit test that test that subtitles context works."""
+        with SubtitlesContext() as manager:
+            manager.subtitles_list = [Subtitle("The first subtitle", 12, 34, None),
+                                      Subtitle("The second subtitle", 24, 56, 10)]
+            manager.resume_percentage = 0.4
+            manager.vectoring_type = VectoringType.N_GRAM_COUNTERS
+            manager.remove_punctuation = False
+            manager.punctuation_signs = ['¡', '!', '"', '#', '.', ';', ':']
+            manager.remove_stop_words = True
+            manager.remove_capital_letters = True
+            manager.remove_accents = False
+            manager.language = Languages.FINNISH
+
+        with SubtitlesContext() as manager:
+            self.assertEqual("The first subtitle", manager.subtitles_list[0].text)
+            self.assertIsNone(manager.subtitles_list[0].score)
+            self.assertEqual(24, manager.subtitles_list[1].start)
+            self.assertEqual(0.4, manager.resume_percentage)
+            self.assertEqual(VectoringType.N_GRAM_COUNTERS, manager.vectoring_type)
+            self.assertFalse(manager.remove_punctuation)
+            self.assertEqual('#', manager.punctuation_signs[3])
+            self.assertTrue(manager.remove_stop_words)
+            self.assertTrue(manager.remove_capital_letters)
+            self.assertFalse(manager.remove_accents)
+            self.assertEqual(Languages.FINNISH, manager.language)
+
+            manager.subtitles_list[1].score = 8
+            manager.subtitles_list.pop(0)
+            manager.subtitles_list.append(Subtitle("The thirst subtitle", 55, 70, None))
+            manager.resume_percentage += 0.15
+            manager.vectoring_type = VectoringType.BINARIES_COUNTERS
+            manager.remove_punctuation = True
+            manager.punctuation_signs.remove('#')
+            manager.punctuation_signs += ['(', ')']
+            manager.remove_stop_words = False
+            manager.remove_capital_letters = False
+            manager.remove_accents = True
+            manager.language = Languages.SPANISH
+
+        with SubtitlesContext() as manager:
+            self.assertEqual(manager.subtitles_list[0].score, 8)
+            self.assertEqual(24, manager.subtitles_list[0].start)
+            self.assertEqual("The thirst subtitle", manager.subtitles_list[1].text)
+            self.assertEqual(0.55, manager.resume_percentage)
+            self.assertEqual(VectoringType.BINARIES_COUNTERS, manager.vectoring_type)
+            self.assertTrue(manager.remove_punctuation)
+            self.assertNotEqual('#', manager.punctuation_signs[3])
+            self.assertEqual('(', manager.punctuation_signs[6])
+            self.assertEqual(')', manager.punctuation_signs[7])
+            self.assertFalse(manager.remove_stop_words)
+            self.assertFalse(manager.remove_capital_letters)
+            self.assertTrue(manager.remove_accents)
+            self.assertEqual(Languages.SPANISH, manager.language)
 
 
 if __name__ == '__main__':
