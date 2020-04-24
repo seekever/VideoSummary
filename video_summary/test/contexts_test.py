@@ -1,5 +1,6 @@
 """Unit tests that test that contexts work."""
-
+import logging
+import sys
 import unittest
 
 from video_summary.context.general_context import GeneralContext, ResumeMode
@@ -8,12 +9,28 @@ from video_summary.context.scenes_context import ScenesContext
 from video_summary.context.subtitles_context import SubtitlesContext, VectoringType, Languages
 from video_summary.objects.subtitle import Subtitle
 
+# Logger
+LOGGER_NAME = 'Test.Context'
+LOGGER_FILENAME = 'ContextTest.log'
+LOGGER_LEVEL = logging.DEBUG
+LOGGER_FORMAT = '%(asctime)s %(threadName)s %(levelname)-8s %(module)s: %(message)s'
+LOGGER_DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
+
+logging.basicConfig(filename=LOGGER_FILENAME, level=LOGGER_LEVEL,
+                    format=LOGGER_FORMAT, datefmt=LOGGER_DATE_FORMAT)
+
+LOG = logging.getLogger(LOGGER_NAME)
+SH = logging.StreamHandler(sys.stdout)
+SH.setFormatter(logging.Formatter(LOGGER_FORMAT))
+LOG.addHandler(SH)
+
 
 class GeneralContextTest(unittest.TestCase):
     """Class with all the context test methods."""
 
     def test_general_context(self):
         """Unit test that test that general context works."""
+        LOG.info('starting general context test')
         with GeneralContext() as manager:
             manager.resume_mode = ResumeMode.SUBTITLES
             manager.detect_scenes = True
@@ -28,9 +45,11 @@ class GeneralContextTest(unittest.TestCase):
         with GeneralContext() as manager:
             self.assertEqual(ResumeMode.OBJECTS, manager.resume_mode)
             self.assertFalse(manager.detect_scenes)
+        LOG.info('ending general context test')
 
     def test_scenes_context(self):
         """Unit test that test that scenes context works."""
+        LOG.info('starting scenes context test')
         with ScenesContext() as manager:
             manager.scenes_list = [[0, 10], [11, 25], [26, 45]]
 
@@ -43,9 +62,11 @@ class GeneralContextTest(unittest.TestCase):
         with ScenesContext() as manager:
             self.assertEqual([13, 24], manager.scenes_list[1])
             self.assertEqual([46, 60], manager.scenes_list[3])
+        LOG.info('ending scenes context test')
 
     def test_objects_context(self):
         """Unit test that test that objects context works."""
+        LOG.info('starting objects context test')
         with ObjectsContext() as manager:
             manager.objects_dict = {"dog": [10, 23, 45], "cat": [5, 41]}
             manager.objects_list = ['dog', 'cat', 'car']
@@ -77,9 +98,11 @@ class GeneralContextTest(unittest.TestCase):
             self.assertTrue(manager.optimization)
             self.assertEqual(300, manager.milliseconds_periodicity)
             self.assertEqual(2, manager.scenes_periodicity)
+        LOG.info('ending objects context test')
 
     def test_subtitles_context(self):
         """Unit test that test that subtitles context works."""
+        LOG.info('starting subtitles context test')
         with SubtitlesContext() as manager:
             manager.subtitles_list = [Subtitle("The first subtitle", 12, 34, None),
                                       Subtitle("The second subtitle", 24, 56, 10)]
@@ -132,6 +155,7 @@ class GeneralContextTest(unittest.TestCase):
             self.assertFalse(manager.remove_capital_letters)
             self.assertTrue(manager.remove_accents)
             self.assertEqual(Languages.SPANISH, manager.language)
+        LOG.info('ending subtitles context test')
 
 
 if __name__ == '__main__':

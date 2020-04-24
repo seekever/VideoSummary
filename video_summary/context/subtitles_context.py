@@ -1,5 +1,6 @@
 """The context which manages the subtitles configurations."""
 import json
+import logging
 import os
 from enum import Enum
 
@@ -19,6 +20,10 @@ REMOVE_STOP_WORDS = "removeStopWords"
 REMOVE_CAPITAL_LETTERS = "removeCapitalLetters"
 REMOVE_ACCENTS = "removeAccents"
 LANGUAGE = "language"
+
+# Logger
+LOGGER_NAME = 'App.Context.Subtitles'
+LOG = logging.getLogger(LOGGER_NAME)
 
 
 # Parametrization
@@ -92,6 +97,7 @@ class SubtitlesContext:
     """
 
     def __init__(self):
+        LOG.debug('starting subtitles context')
         self.config = None
         self.subtitles_list = None
         self.resume_percentage = None
@@ -102,15 +108,22 @@ class SubtitlesContext:
         self.remove_capital_letters = None
         self.remove_accents = None
         self.language = None
+        LOG.debug('subtitles context started')
 
     def __enter__(self):
         try:
+            LOG.debug('reading subtitles context')
             with open(CONFIG_PATH, 'r') as json_file:
                 json_string = json_file.read()
                 self.config = json.loads(json_string)
+                LOG.info('subtitles context read from %s', CONFIG_PATH)
         except FileNotFoundError:
+            LOG.debug('subtitles context not found')
+            LOG.debug('creating subtitles context')
             self.config = {}
+            LOG.debug('subtitles context created')
 
+        LOG.debug('loading subtitles context')
         self.subtitles_list = from_dict_list(self.config.get(SUBTITLES_LIST))
         self.resume_percentage = self.config.get(RESUME_PERCENTAGE)
         self.vectoring_type = self.config.get(VECTORING_TYPE)
@@ -120,10 +133,12 @@ class SubtitlesContext:
         self.remove_capital_letters = self.config.get(REMOVE_CAPITAL_LETTERS)
         self.remove_accents = self.config.get(REMOVE_ACCENTS)
         self.language = self.config.get(LANGUAGE)
+        LOG.debug('subtitles context loaded')
 
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        LOG.debug('saving subtitles context')
         self.config[SUBTITLES_LIST] = to_dict_list(self.subtitles_list)
         self.config[RESUME_PERCENTAGE] = self.resume_percentage
         self.config[VECTORING_TYPE] = self.vectoring_type
@@ -133,10 +148,13 @@ class SubtitlesContext:
         self.config[REMOVE_CAPITAL_LETTERS] = self.remove_capital_letters
         self.config[REMOVE_ACCENTS] = self.remove_accents
         self.config[LANGUAGE] = self.language
+        LOG.debug('subtitles context saved')
 
+        LOG.debug('writing subtitles context')
         json_string = json.dumps(self.config, indent=4)
 
         with open(CONFIG_PATH, 'w') as json_file:
             json_file.write(json_string)
 
         json_file.close()
+        LOG.info('subtitles context written at %s', CONFIG_PATH)

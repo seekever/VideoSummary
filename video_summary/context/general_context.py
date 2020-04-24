@@ -1,6 +1,7 @@
 """The context which manages the general configurations."""
 
 import json
+import logging
 import os
 
 from enum import Enum
@@ -12,6 +13,10 @@ CONFIG_PATH = os.path.join(ROOT_DIR, 'GeneralConfig.conf')
 # Strings for JSON
 RESUME_MODE = "resumeMode"
 DETECT_SCENES = "detectScenes"
+
+# Logger
+LOGGER_NAME = 'App.Context.General'
+LOG = logging.getLogger(LOGGER_NAME)
 
 
 # Parametrization
@@ -40,30 +45,43 @@ class GeneralContext:
     """
 
     def __init__(self):
+        LOG.debug('starting general context')
         self.config = None
         self.resume_mode = None
         self.detect_scenes = None
+        LOG.debug('general context started')
 
     def __enter__(self):
         try:
+            LOG.debug('reading general context')
             with open(CONFIG_PATH, 'r') as json_file:
                 json_string = json_file.read()
                 self.config = json.loads(json_string)
+                LOG.info('general context read from %s', CONFIG_PATH)
         except FileNotFoundError:
+            LOG.debug('general context not found')
+            LOG.debug('creating general context')
             self.config = {}
+            LOG.debug('general context created')
 
+        LOG.debug('loading general context')
         self.resume_mode = self.config.get(RESUME_MODE)
         self.detect_scenes = self.config.get(DETECT_SCENES)
+        LOG.debug('general context loaded')
 
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        LOG.debug('saving general context')
         self.config[RESUME_MODE] = self.resume_mode
         self.config[DETECT_SCENES] = self.detect_scenes
+        LOG.debug('general context saved')
 
+        LOG.debug('writing general context')
         json_string = json.dumps(self.config, indent=4)
 
         with open(CONFIG_PATH, 'w') as json_file:
             json_file.write(json_string)
 
         json_file.close()
+        LOG.info('general context written at %s', CONFIG_PATH)
