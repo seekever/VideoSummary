@@ -1,4 +1,5 @@
 """Unit tests that test that contexts work."""
+
 import logging
 import sys
 import unittest
@@ -35,20 +36,24 @@ class GeneralContextTest(unittest.TestCase):
             manager.original_video_path = "test/path.mp4"
             manager.resume_mode = ResumeMode.SUBTITLES
             manager.detect_scenes = True
+            manager.scenes_difference = 0.3
 
         with GeneralContext() as manager:
             self.assertEqual("test/path.mp4", manager.original_video_path)
             self.assertEqual(ResumeMode.SUBTITLES, manager.resume_mode)
             self.assertTrue(manager.detect_scenes)
+            self.assertEqual(0.3, manager.scenes_difference)
 
             manager.original_video_path = None
             manager.resume_mode = ResumeMode.OBJECTS
             manager.detect_scenes = False
+            manager.scenes_difference -= 0.05
 
         with GeneralContext() as manager:
             self.assertIsNone(manager.original_video_path)
             self.assertEqual(ResumeMode.OBJECTS, manager.resume_mode)
             self.assertFalse(manager.detect_scenes)
+            self.assertEqual(0.25, manager.scenes_difference)
         LOG.info('ending general context test')
 
     def test_scenes_context(self):

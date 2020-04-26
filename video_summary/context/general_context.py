@@ -14,6 +14,7 @@ CONFIG_PATH = os.path.join(ROOT_DIR, 'GeneralConfig.conf')
 ORIGINAL_VIDEO_PATH = "originalVideoPath"
 RESUME_MODE = "resumeMode"
 DETECT_SCENES = "detectScenes"
+SCENES_DIFFERENCE = "scenesDifference"
 
 # Logger
 LOGGER_NAME = 'App.Context.General'
@@ -23,9 +24,9 @@ LOG = logging.getLogger(LOGGER_NAME)
 # Parametrization
 class ResumeMode(int, Enum):
     """ Parametrization for the resume mode."""
-    SUBTITLES = 1
-    OBJECTS = 2
-    SUBTITLES_AND_OBJECTS = 3
+    SUBTITLES = 0
+    OBJECTS = 1
+    SUBTITLES_AND_OBJECTS = 2
 
 
 class GeneralContext:
@@ -44,6 +45,8 @@ class GeneralContext:
         the resume mode (class ResumeMode)
     detect_scenes : bool
         a boolean to activate the scene detection
+    scenes_difference : float
+        the difference percentage between scenes
 
     """
 
@@ -53,6 +56,7 @@ class GeneralContext:
         self.original_video_path = None
         self.resume_mode = None
         self.detect_scenes = None
+        self.scenes_difference = None
         LOG.debug('general context started')
 
     def __enter__(self):
@@ -72,6 +76,7 @@ class GeneralContext:
         self.original_video_path = self.config.get(ORIGINAL_VIDEO_PATH)
         self.resume_mode = self.config.get(RESUME_MODE)
         self.detect_scenes = self.config.get(DETECT_SCENES)
+        self.scenes_difference = self.config.get(SCENES_DIFFERENCE)
         LOG.debug('general context loaded')
 
         return self
@@ -81,6 +86,7 @@ class GeneralContext:
         self.config[ORIGINAL_VIDEO_PATH] = self.original_video_path
         self.config[RESUME_MODE] = self.resume_mode
         self.config[DETECT_SCENES] = self.detect_scenes
+        self.config[SCENES_DIFFERENCE] = self.scenes_difference
         LOG.debug('general context saved')
 
         LOG.debug('writing general context')

@@ -5,6 +5,7 @@ import sys
 
 from PyQt5.QtWidgets import QApplication
 
+from video_summary.models.general_options_model import GeneralOptions
 from video_summary.models.main_window_model import MainWindow
 
 # Logger
@@ -36,7 +37,14 @@ def main():
     LOG.info('starting app')
     app = QApplication(sys.argv)
 
+    # Windows
     main_window = MainWindow()
+    general_options = GeneralOptions()
+
+    # Signals
+    main_window.next.connect(lambda: load_window(general_options))
+    general_options.previous.connect(lambda: load_window(main_window))
+
     load_window(main_window)
 
     app.exec_()
