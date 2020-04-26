@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QApplication
 
 from video_summary.models.general_options_model import GeneralOptions
 from video_summary.models.main_window_model import MainWindow
+from video_summary.models.objects_options_model import ObjectsOptions
 
 # Logger
 LOGGER_NAME = 'App'
@@ -40,10 +41,13 @@ def main():
     # Windows
     main_window = MainWindow()
     general_options = GeneralOptions()
+    objects_options = ObjectsOptions()
 
     # Signals
     main_window.next.connect(lambda: load_window(general_options))
     general_options.previous.connect(lambda: load_window(main_window))
+    general_options.next.connect(lambda: load_window(objects_options))
+    objects_options.previous.connect(lambda: load_window(general_options))
 
     load_window(main_window)
 
