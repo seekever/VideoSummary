@@ -27,9 +27,9 @@ class Subtitle:
     Methods
     -------
     set_times(start, end)
-        Set start and end times to a Subtitle.
+        set start and end times to a Subtitle
     get_times()
-        Get start and end times like a list [start, end].
+        get start and end times like a list [start, end]
     """
 
     def __init__(self, text, start, end, score):

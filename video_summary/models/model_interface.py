@@ -37,6 +37,7 @@ class ModelInterface:
         save context and pass to the next window
     """
 
+    # Signals
     next = QtCore.pyqtSignal()
     previous = QtCore.pyqtSignal()
 

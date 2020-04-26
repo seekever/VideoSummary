@@ -53,10 +53,12 @@ class GeneralOptions(QtWidgets.QMainWindow, ModelInterface):
         LOG.debug('loading context')
         with GeneralContext() as manager:
             self.resumeTypeBox.setCurrentIndex(manager.resume_mode or DEFAULT_RESUME_MODE)
+
             if manager.detect_scenes is not None:
                 self.scenesDetectionBox.setChecked(manager.detect_scenes)
             else:
                 self.scenesDetectionBox.setChecked(DEFAULT_DETECT_SCENES)
+
             self.scenesDifSlider.setValue((manager.scenes_difference or
                                            DEFAULT_SCENES_DIFFERENCE) * 100)
         LOG.debug('context loaded')

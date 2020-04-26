@@ -34,8 +34,6 @@ class MainWindow(QtWidgets.QMainWindow, ModelInterface):
 
     Methods
     -------
-    check_data()
-        check if all context data is correct
     load_video()
         asks to the user the original video path
     """
@@ -70,12 +68,17 @@ class MainWindow(QtWidgets.QMainWindow, ModelInterface):
         LOG.debug('conditional format reloaded')
 
     def check_data(self):
+        LOG.debug('checking data')
         if self.path is None:
+            LOG.info('incorrect data (path is null)')
             return False
         if self.path == "":
+            LOG.info('incorrect data (path is empty)')
             return False
         if not self.path.endswith('.mp4'):
+            LOG.info('incorrect data (selected video is not mp4 format)')
             return False
+        LOG.info('checked data: OK')
         return True
 
     def load_video(self):

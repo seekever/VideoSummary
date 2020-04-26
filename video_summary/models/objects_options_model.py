@@ -78,6 +78,8 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
             manager.optimization = self.optimizationBox.isChecked()
             manager.scenes_periodicity = self.analysisSlider.value()
             manager.milliseconds_periodicity = self.periodicitySlider.value()
+            if manager.objects_list is None:
+                manager.objects_list = DEFAULT_OBJECT_LIST
             manager.objects_list.clear()
             for i in range(self.objectsView.count()):
                 manager.objects_list.append(self.objectsView.item(i).text())
@@ -115,9 +117,9 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
         LOG.info('item %s removed', item)
         self.reload_conditional_format()
 
-    def update_progress_bar(self, value):
+    def update_scenes_analysis_progress_bar(self, value):
         """
-        Method that update que progress bar indicator.
+        Method that update the progress bar of the scenes analysis.
 
         Parameters
         ----------
@@ -125,6 +127,6 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
             the progress bar value (0 - 100)
         """
 
-        LOG.debug('updating progress bar')
+        LOG.debug('updating scenes analysis progress bar')
         self.sceneAnalysisBar.setValue(value)
-        LOG.debug('progress bar updated: %s / 100', value)
+        LOG.debug('scenes analysis progress bar updated: %s / 100', value)
