@@ -11,6 +11,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(ROOT_DIR, 'SubtitlesConfig.conf')
 
 # Strings for JSON
+SUBTITLES_PATH = "subtitlesPath"
 SUBTITLES_LIST = "subtitlesList"
 RESUME_PERCENTAGE = "resumePercentage"
 VECTORING_TYPE = "vectoringType"
@@ -29,40 +30,40 @@ LOG = logging.getLogger(LOGGER_NAME)
 # Parametrization
 class VectoringType(int, Enum):
     """ Parametrization for the vectoring type."""
-    COUNTERS = 1
-    BINARIES_COUNTERS = 2
-    N_GRAM_COUNTERS = 3
-    TF_WITH_NORMALIZATION_L1 = 4
-    TF_WITH_NORMALIZATION_L2 = 5
-    TF_IDF = 6
-    TF_IDF_WITH_SMOOTHING_IDF = 7
-    TF_IDF_WITH_SMOOTHING_IDF_AND_NORMALIZATION_L1 = 8
-    TF_IDF_WITH_SMOOTHING_IDF_AND_NORMALIZATION_L2 = 9
+    COUNTERS = 0
+    BINARIES_COUNTERS = 1
+    N_GRAM_COUNTERS = 2
+    TF_WITH_NORMALIZATION_L1 = 3
+    TF_WITH_NORMALIZATION_L2 = 4
+    TF_IDF = 5
+    TF_IDF_WITH_SMOOTHING_IDF = 6
+    TF_IDF_WITH_SMOOTHING_IDF_AND_NORMALIZATION_L1 = 7
+    TF_IDF_WITH_SMOOTHING_IDF_AND_NORMALIZATION_L2 = 8
 
 
-class Languages(str, Enum):
+class Languages(int, Enum):
     """ Parametrization for the vectoring type."""
-    ARABIC = "arabic"
-    AZERBAIJANI = "azerbaijani"
-    DANISH = "danish"
-    DUTCH = "dutch"
-    ENGLISH = "english"
-    FINNISH = "finnish"
-    FRENCH = "french"
-    GERMAN = "german"
-    GREEK = "greek"
-    HUNGARIAN = "hungarian"
-    INDONESIAN = "indonesian"
-    ITALIAN = "italian"
-    KAZAKH = "kazakh"
-    NEPALI = "nepali"
-    NORWEGIAN = "norwegian"
-    PORTUGUESE = "portuguese"
-    ROMANIAN = "romanian"
-    RUSSIAN = "russian"
-    SPANISH = "spanish"
-    SWEDISH = "swedish"
-    TURKISH = "turkish"
+    ARABIC = 0
+    AZERBAIJANI = 1
+    DANISH = 2
+    DUTCH = 3
+    ENGLISH = 4
+    FINNISH = 5
+    FRENCH = 6
+    GERMAN = 7
+    GREEK = 8
+    HUNGARIAN = 9
+    INDONESIAN = 10
+    ITALIAN = 11
+    KAZAKH = 12
+    NEPALI = 13
+    NORWEGIAN = 14
+    PORTUGUESE = 15
+    ROMANIAN = 16
+    RUSSIAN = 17
+    SPANISH = 18
+    SWEDISH = 19
+    TURKISH = 20
 
 
 class SubtitlesContext:
@@ -75,6 +76,8 @@ class SubtitlesContext:
     ----------
     config : dict
         a dict with all the general settings
+    subtitles_path : str
+        the subtitles path
     subtitles_list : list
         a list of Subtitles objects
     resume_percentage : float
@@ -91,7 +94,7 @@ class SubtitlesContext:
         a boolean to activate the capital letters remove
     remove_accents : bool
         a boolean to activate the accents remove
-    language : string
+    language : int
          the subtitles language (class Language)
 
     """
@@ -99,6 +102,7 @@ class SubtitlesContext:
     def __init__(self):
         LOG.debug('starting subtitles context')
         self.config = None
+        self.subtitles_path = None
         self.subtitles_list = None
         self.resume_percentage = None
         self.vectoring_type = None
@@ -124,6 +128,7 @@ class SubtitlesContext:
             LOG.debug('subtitles context created')
 
         LOG.debug('loading subtitles context')
+        self.subtitles_path = self.config.get(SUBTITLES_PATH)
         self.subtitles_list = from_dict_list(self.config.get(SUBTITLES_LIST))
         self.resume_percentage = self.config.get(RESUME_PERCENTAGE)
         self.vectoring_type = self.config.get(VECTORING_TYPE)
@@ -139,6 +144,7 @@ class SubtitlesContext:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         LOG.debug('saving subtitles context')
+        self.config[SUBTITLES_PATH] = self.subtitles_path
         self.config[SUBTITLES_LIST] = to_dict_list(self.subtitles_list)
         self.config[RESUME_PERCENTAGE] = self.resume_percentage
         self.config[VECTORING_TYPE] = self.vectoring_type

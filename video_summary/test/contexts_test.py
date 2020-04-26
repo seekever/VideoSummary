@@ -25,6 +25,9 @@ SH = logging.StreamHandler(sys.stdout)
 SH.setFormatter(logging.Formatter(LOGGER_FORMAT))
 LOG.addHandler(SH)
 
+# Test constants
+SUBTITLES_PATH_TEST = "subtitles/path.srt"
+
 
 class GeneralContextTest(unittest.TestCase):
     """Class with all the context test methods."""
@@ -113,11 +116,12 @@ class GeneralContextTest(unittest.TestCase):
         """Unit test that test that subtitles context works."""
         LOG.info('starting subtitles context test')
         with SubtitlesContext() as manager:
+            manager.subtitles_path = None
             manager.subtitles_list = [Subtitle("The first subtitle", 12, 34, None),
                                       Subtitle("The second subtitle", 24, 56, 10)]
             manager.resume_percentage = 0.4
             manager.vectoring_type = VectoringType.N_GRAM_COUNTERS
-            manager.remove_punctuation = False
+            manager.remove_punctuation = None
             manager.punctuation_signs = ['¡', '!', '"', '#', '.', ';', ':']
             manager.remove_stop_words = True
             manager.remove_capital_letters = True
@@ -130,13 +134,14 @@ class GeneralContextTest(unittest.TestCase):
             self.assertEqual(24, manager.subtitles_list[1].start)
             self.assertEqual(0.4, manager.resume_percentage)
             self.assertEqual(VectoringType.N_GRAM_COUNTERS, manager.vectoring_type)
-            self.assertFalse(manager.remove_punctuation)
+            self.assertIsNone(manager.remove_punctuation)
             self.assertEqual('#', manager.punctuation_signs[3])
             self.assertTrue(manager.remove_stop_words)
             self.assertTrue(manager.remove_capital_letters)
             self.assertFalse(manager.remove_accents)
             self.assertEqual(Languages.FINNISH, manager.language)
 
+            manager.subtitles_path = SUBTITLES_PATH_TEST
             manager.subtitles_list[1].score = 8
             manager.subtitles_list.pop(0)
             manager.subtitles_list.append(Subtitle("The thirst subtitle", 55, 70, None))
@@ -145,12 +150,11 @@ class GeneralContextTest(unittest.TestCase):
             manager.remove_punctuation = True
             manager.punctuation_signs.remove('#')
             manager.punctuation_signs += ['(', ')']
-            manager.remove_stop_words = False
-            manager.remove_capital_letters = False
-            manager.remove_accents = True
+            manager.remove_capital_letters = None
             manager.language = Languages.SPANISH
 
         with SubtitlesContext() as manager:
+            self.assertEqual(SUBTITLES_PATH_TEST, manager.subtitles_path)
             self.assertEqual(manager.subtitles_list[0].score, 8)
             self.assertEqual("The thirst subtitle", manager.subtitles_list[1].text)
             self.assertEqual(0.55, manager.resume_percentage)
@@ -159,9 +163,8 @@ class GeneralContextTest(unittest.TestCase):
             self.assertNotEqual('#', manager.punctuation_signs[3])
             self.assertEqual('(', manager.punctuation_signs[6])
             self.assertEqual(')', manager.punctuation_signs[7])
-            self.assertFalse(manager.remove_stop_words)
             self.assertFalse(manager.remove_capital_letters)
-            self.assertTrue(manager.remove_accents)
+            self.assertFalse(manager.remove_accents)
             self.assertEqual(Languages.SPANISH, manager.language)
         LOG.info('ending subtitles context test')
 
