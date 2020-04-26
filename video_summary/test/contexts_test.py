@@ -32,17 +32,21 @@ class GeneralContextTest(unittest.TestCase):
         """Unit test that test that general context works."""
         LOG.info('starting general context test')
         with GeneralContext() as manager:
+            manager.original_video_path = "test/path.mp4"
             manager.resume_mode = ResumeMode.SUBTITLES
             manager.detect_scenes = True
 
         with GeneralContext() as manager:
+            self.assertEqual("test/path.mp4", manager.original_video_path)
             self.assertEqual(ResumeMode.SUBTITLES, manager.resume_mode)
             self.assertTrue(manager.detect_scenes)
 
+            manager.original_video_path = None
             manager.resume_mode = ResumeMode.OBJECTS
             manager.detect_scenes = False
 
         with GeneralContext() as manager:
+            self.assertIsNone(manager.original_video_path)
             self.assertEqual(ResumeMode.OBJECTS, manager.resume_mode)
             self.assertFalse(manager.detect_scenes)
         LOG.info('ending general context test')
@@ -143,7 +147,6 @@ class GeneralContextTest(unittest.TestCase):
 
         with SubtitlesContext() as manager:
             self.assertEqual(manager.subtitles_list[0].score, 8)
-            self.assertEqual(24, manager.subtitles_list[0].start)
             self.assertEqual("The thirst subtitle", manager.subtitles_list[1].text)
             self.assertEqual(0.55, manager.resume_percentage)
             self.assertEqual(VectoringType.BINARIES_COUNTERS, manager.vectoring_type)
