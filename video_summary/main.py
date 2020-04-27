@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QApplication
 from video_summary.models.general_options_model import GeneralOptions
 from video_summary.models.main_window_model import MainWindow
 from video_summary.models.objects_options_model import ObjectsOptions
+from video_summary.models.resume_options_model import ResumeOptions
 from video_summary.models.subtitles_options_model import SubtitlesOptions
 
 # Logger
@@ -44,6 +45,7 @@ def main():
     general_options = GeneralOptions()
     objects_options = ObjectsOptions()
     subtitles_options = SubtitlesOptions()
+    resume_options = ResumeOptions()
 
     # Signals
     main_window.next.connect(lambda: load_window(general_options))
@@ -52,6 +54,8 @@ def main():
     objects_options.previous.connect(lambda: load_window(general_options))
     objects_options.next.connect(lambda: load_window(subtitles_options))
     subtitles_options.previous.connect(lambda: load_window(objects_options))
+    subtitles_options.next.connect(lambda: load_window(resume_options))
+    resume_options.previous.connect(lambda: load_window(subtitles_options))
 
     load_window(main_window)
 
