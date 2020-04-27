@@ -168,6 +168,53 @@ class GeneralContextTest(unittest.TestCase):
             self.assertEqual(Languages.SPANISH, manager.language)
         LOG.info('ending subtitles context test')
 
+    def test_read_only(self):
+        """Unit test that test that the read_only mode works."""
+
+        # General context
+        with GeneralContext() as manager:
+            manager.detect_scenes = True
+
+        with GeneralContext(read_only=True) as manager:
+            self.assertTrue(manager.detect_scenes)
+            manager.detect_scenes = False
+
+        with GeneralContext() as manager:
+            self.assertTrue(manager.detect_scenes)
+
+        # Scenes context
+        with ScenesContext() as manager:
+            manager.scenes_list = [[0, 10], [11, 25], [26, 45]]
+
+        with ScenesContext(read_only=True) as manager:
+            self.assertEqual([[0, 10], [11, 25], [26, 45]], manager.scenes_list)
+            manager.scenes_list = [[5, 14], [30, 36]]
+
+        with ScenesContext() as manager:
+            self.assertEqual([[0, 10], [11, 25], [26, 45]], manager.scenes_list)
+
+        # Objects context
+        with ObjectsContext() as manager:
+            manager.objects_dict = {"dog": [10, 23, 45], "cat": [5, 41]}
+
+        with ObjectsContext(read_only=True) as manager:
+            self.assertEqual([5, 41], manager.objects_dict["cat"])
+            manager.objects_dict["dog"].remove(23)
+
+        with ObjectsContext() as manager:
+            self.assertEqual([10, 23, 45], manager.objects_dict["dog"])
+
+        # Subtitles context
+        with SubtitlesContext() as manager:
+            manager.subtitles_path = SUBTITLES_PATH_TEST
+
+        with SubtitlesContext(read_only=True) as manager:
+            self.assertEqual(SUBTITLES_PATH_TEST, manager.subtitles_path)
+            manager.subtitles_path = "subtitles/second/path.srt"
+
+        with SubtitlesContext() as manager:
+            self.assertEqual(SUBTITLES_PATH_TEST, manager.subtitles_path)
+
 
 if __name__ == '__main__':
     unittest.main()

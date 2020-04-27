@@ -37,6 +37,8 @@ class GeneralContext:
 
     Attributes
     ----------
+    read_only : bool
+        a boolean to activate the read only mode
     config : dict
         a dict with all the general settings
     original_video_path : str
@@ -50,8 +52,9 @@ class GeneralContext:
 
     """
 
-    def __init__(self):
+    def __init__(self, read_only=False):
         LOG.debug('starting general context')
+        self.read_only = read_only
         self.config = None
         self.original_video_path = None
         self.resume_mode = None
@@ -82,18 +85,19 @@ class GeneralContext:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        LOG.debug('saving general context')
-        self.config[ORIGINAL_VIDEO_PATH] = self.original_video_path
-        self.config[RESUME_MODE] = self.resume_mode
-        self.config[DETECT_SCENES] = self.detect_scenes
-        self.config[SCENES_DIFFERENCE] = self.scenes_difference
-        LOG.debug('general context saved')
+        if not self.read_only:
+            LOG.debug('saving general context')
+            self.config[ORIGINAL_VIDEO_PATH] = self.original_video_path
+            self.config[RESUME_MODE] = self.resume_mode
+            self.config[DETECT_SCENES] = self.detect_scenes
+            self.config[SCENES_DIFFERENCE] = self.scenes_difference
+            LOG.debug('general context saved')
 
-        LOG.debug('writing general context')
-        json_string = json.dumps(self.config, indent=4)
+            LOG.debug('writing general context')
+            json_string = json.dumps(self.config, indent=4)
 
-        with open(CONFIG_PATH, 'w') as json_file:
-            json_file.write(json_string)
+            with open(CONFIG_PATH, 'w') as json_file:
+                json_file.write(json_string)
 
-        json_file.close()
-        LOG.info('general context written at %s', CONFIG_PATH)
+            json_file.close()
+            LOG.info('general context written at %s', CONFIG_PATH)

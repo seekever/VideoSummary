@@ -28,6 +28,8 @@ class ObjectsContext:
 
     Attributes
     ----------
+    read_only : bool
+        a boolean to activate the read only mode
     config : dict
         a dict with all the general settings
     objects_dict : dict
@@ -43,8 +45,9 @@ class ObjectsContext:
 
     """
 
-    def __init__(self):
+    def __init__(self, read_only=False):
         LOG.debug('starting objects context')
+        self.read_only = read_only
         self.config = None
         self.objects_dict = None
         self.objects_list = None
@@ -77,19 +80,20 @@ class ObjectsContext:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        LOG.debug('saving objects context')
-        self.config[OBJECTS_DICT] = self.objects_dict
-        self.config[OBJECTS_LIST] = self.objects_list
-        self.config[OPTIMIZATION] = self.optimization
-        self.config[MILLISECONDS_PERIODICITY] = self.milliseconds_periodicity
-        self.config[SCENES_PERIODICITY] = self.scenes_periodicity
-        LOG.debug('objects context saved')
+        if not self.read_only:
+            LOG.debug('saving objects context')
+            self.config[OBJECTS_DICT] = self.objects_dict
+            self.config[OBJECTS_LIST] = self.objects_list
+            self.config[OPTIMIZATION] = self.optimization
+            self.config[MILLISECONDS_PERIODICITY] = self.milliseconds_periodicity
+            self.config[SCENES_PERIODICITY] = self.scenes_periodicity
+            LOG.debug('objects context saved')
 
-        LOG.debug('writing objects context')
-        json_string = json.dumps(self.config, indent=4)
+            LOG.debug('writing objects context')
+            json_string = json.dumps(self.config, indent=4)
 
-        with open(CONFIG_PATH, 'w') as json_file:
-            json_file.write(json_string)
+            with open(CONFIG_PATH, 'w') as json_file:
+                json_file.write(json_string)
 
-        json_file.close()
-        LOG.info('objects context written at %s', CONFIG_PATH)
+            json_file.close()
+            LOG.info('objects context written at %s', CONFIG_PATH)

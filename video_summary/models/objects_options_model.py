@@ -61,7 +61,7 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
 
     def load_context(self):
         LOG.debug('loading context')
-        with ObjectsContext() as manager:
+        with ObjectsContext(read_only=True) as manager:
             if manager.optimization is not None:
                 self.optimizationBox.setChecked(manager.optimization)
             else:

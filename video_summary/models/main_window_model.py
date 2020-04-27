@@ -52,7 +52,7 @@ class MainWindow(QtWidgets.QMainWindow, ModelInterface):
 
     def load_context(self):
         LOG.debug('loading context')
-        with GeneralContext() as manager:
+        with GeneralContext(read_only=True) as manager:
             self.path = manager.original_video_path
         LOG.debug('context loaded')
 

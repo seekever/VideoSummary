@@ -51,7 +51,7 @@ class GeneralOptions(QtWidgets.QMainWindow, ModelInterface):
 
     def load_context(self):
         LOG.debug('loading context')
-        with GeneralContext() as manager:
+        with GeneralContext(read_only=True) as manager:
             self.resumeTypeBox.setCurrentIndex(manager.resume_mode or DEFAULT_RESUME_MODE)
 
             if manager.detect_scenes is not None:

@@ -74,6 +74,8 @@ class SubtitlesContext:
 
     Attributes
     ----------
+    read_only : bool
+        a boolean to activate the read only mode
     config : dict
         a dict with all the general settings
     subtitles_path : str
@@ -99,8 +101,9 @@ class SubtitlesContext:
 
     """
 
-    def __init__(self):
+    def __init__(self, read_only=False):
         LOG.debug('starting subtitles context')
+        self.read_only = read_only
         self.config = None
         self.subtitles_path = None
         self.subtitles_list = None
@@ -143,24 +146,25 @@ class SubtitlesContext:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        LOG.debug('saving subtitles context')
-        self.config[SUBTITLES_PATH] = self.subtitles_path
-        self.config[SUBTITLES_LIST] = to_dict_list(self.subtitles_list)
-        self.config[RESUME_PERCENTAGE] = self.resume_percentage
-        self.config[VECTORING_TYPE] = self.vectoring_type
-        self.config[REMOVE_PUNCTUATION] = self.remove_punctuation
-        self.config[PUNCTUATION_SIGNS] = self.punctuation_signs
-        self.config[REMOVE_STOP_WORDS] = self.remove_stop_words
-        self.config[REMOVE_CAPITAL_LETTERS] = self.remove_capital_letters
-        self.config[REMOVE_ACCENTS] = self.remove_accents
-        self.config[LANGUAGE] = self.language
-        LOG.debug('subtitles context saved')
+        if not self.read_only:
+            LOG.debug('saving subtitles context')
+            self.config[SUBTITLES_PATH] = self.subtitles_path
+            self.config[SUBTITLES_LIST] = to_dict_list(self.subtitles_list)
+            self.config[RESUME_PERCENTAGE] = self.resume_percentage
+            self.config[VECTORING_TYPE] = self.vectoring_type
+            self.config[REMOVE_PUNCTUATION] = self.remove_punctuation
+            self.config[PUNCTUATION_SIGNS] = self.punctuation_signs
+            self.config[REMOVE_STOP_WORDS] = self.remove_stop_words
+            self.config[REMOVE_CAPITAL_LETTERS] = self.remove_capital_letters
+            self.config[REMOVE_ACCENTS] = self.remove_accents
+            self.config[LANGUAGE] = self.language
+            LOG.debug('subtitles context saved')
 
-        LOG.debug('writing subtitles context')
-        json_string = json.dumps(self.config, indent=4)
+            LOG.debug('writing subtitles context')
+            json_string = json.dumps(self.config, indent=4)
 
-        with open(CONFIG_PATH, 'w') as json_file:
-            json_file.write(json_string)
+            with open(CONFIG_PATH, 'w') as json_file:
+                json_file.write(json_string)
 
-        json_file.close()
-        LOG.info('subtitles context written at %s', CONFIG_PATH)
+            json_file.close()
+            LOG.info('subtitles context written at %s', CONFIG_PATH)

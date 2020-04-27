@@ -24,6 +24,8 @@ class ScenesContext:
 
     Attributes
     ----------
+    read_only : bool
+        a boolean to activate the read only mode
     config : dict
         a dict with all the general settings
     scenes_list : list [int, int]
@@ -31,8 +33,9 @@ class ScenesContext:
 
     """
 
-    def __init__(self):
+    def __init__(self, read_only=False):
         LOG.debug('starting scenes context')
+        self.read_only = read_only
         self.config = None
         self.scenes_list = None
         LOG.debug('scenes context started')
@@ -57,14 +60,15 @@ class ScenesContext:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        LOG.debug('saving scenes context')
-        self.config[SCENES_LIST] = self.scenes_list
-        LOG.debug('scenes context saved')
+        if not self.read_only:
+            LOG.debug('saving scenes context')
+            self.config[SCENES_LIST] = self.scenes_list
+            LOG.debug('scenes context saved')
 
-        LOG.debug('writing scenes context')
-        json_string = json.dumps(self.config, indent=4)
+            LOG.debug('writing scenes context')
+            json_string = json.dumps(self.config, indent=4)
 
-        with open(CONFIG_PATH, 'w') as json_file:
-            json_file.write(json_string)
-        json_file.close()
-        LOG.info('scenes context written at %s', CONFIG_PATH)
+            with open(CONFIG_PATH, 'w') as json_file:
+                json_file.write(json_string)
+            json_file.close()
+            LOG.info('scenes context written at %s', CONFIG_PATH)

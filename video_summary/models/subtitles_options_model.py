@@ -110,7 +110,7 @@ class SubtitlesOptions(QtWidgets.QMainWindow, ModelInterface):
 
     def load_context(self):
         LOG.debug('loading context')
-        with SubtitlesContext() as manager:
+        with SubtitlesContext(read_only=True) as manager:
             self.path = manager.subtitles_path
             self.resumePercentageSlider.setValue(manager.resume_percentage
                                                  or DEFAULT_RESUME_PERCENTAGE)
