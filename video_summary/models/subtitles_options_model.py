@@ -87,6 +87,10 @@ class SubtitlesOptions(QtWidgets.QMainWindow, ModelInterface):
     -------
     load_subtitle()
         asks to the user the subtitles path
+    update_scenes_analysis_progress_bar(value)
+        update the progress bar of the scenes analysis
+    update_objects_analysis_progress_bar(value)
+        update the progress bar of the objects analysis
     """
 
     path = None
@@ -101,12 +105,17 @@ class SubtitlesOptions(QtWidgets.QMainWindow, ModelInterface):
         self.loadSubtitlesButton.clicked.connect(self.load_subtitle)
         self.previousButton.clicked.connect(self.previous_window)
         self.nextButton.clicked.connect(self.next_window)
+        self.removePunctuationBox.toggled.connect(self.reload_conditional_format)
+        self.removeStopWordsBox.toggled.connect(self.reload_conditional_format)
 
         for mode in VectoringType:
             self.vectoringTypeBox.addItem(TRANSLATE_VECTORING.get(mode), userData=mode)
 
         for mode in Languages:
             self.subtitlesLanguagesBox.addItem(TRANSLATE_LANGUAGE.get(mode), userData=mode)
+
+        self.update_scenes_analysis_progress_bar(0)
+        self.update_objects_analysis_progress_bar(0)
 
     def load_context(self):
         LOG.debug('loading context')
@@ -217,6 +226,6 @@ class SubtitlesOptions(QtWidgets.QMainWindow, ModelInterface):
             the progress bar value (0 - 100)
         """
 
-        LOG.debug('updating progress bar')
-        self.sceneAnalysisBar.setValue(value)
-        LOG.debug('progress bar updated: %s / 100', value)
+        LOG.debug('updating objects analysis progress bar')
+        self.objectAnalysisBar.setValue(value)
+        LOG.debug('objects analysis progress bar updated: %s / 100', value)

@@ -2,6 +2,7 @@
 
 import logging
 import os
+import re
 
 from PyQt5 import QtWidgets, uic
 
@@ -9,7 +10,6 @@ from video_summary.context.objects_context import ObjectsContext
 from video_summary.models.model_interface import ModelInterface
 
 # Paths
-
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 TEMPLATE_PATH = os.path.join(ROOT_DIR, '../templates/', 'ObjectsOptions.ui')
 
@@ -39,8 +39,8 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
         add an object to the list of objects
     remove_object()
         remove an object from the list of objects
-    update_progress_bar(value)
-        update que progress bar indicator
+    update_scenes_analysis_progress_bar(value)
+        update the progress bar of the scenes analysis
     """
 
     def __init__(self, *args, **kwargs):
@@ -57,7 +57,7 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
         self.optimizationBox.toggled.connect(self.reload_conditional_format)
         self.objectEdit.textChanged.connect(self.reload_conditional_format)
 
-        self.update_progress_bar(0)
+        self.update_scenes_analysis_progress_bar(0)
 
     def load_context(self):
         LOG.debug('loading context')
@@ -66,10 +66,11 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
                 self.optimizationBox.setChecked(manager.optimization)
             else:
                 self.optimizationBox.setChecked(DEFAULT_OPTIMIZATION)
+
             self.analysisSlider.setValue(manager.scenes_periodicity or DEFAULT_ANALYSIS)
             self.periodicitySlider.setValue(manager.milliseconds_periodicity or DEFAULT_PERIODICITY)
             self.objectsView.clear()
-            self.objectsView.addItems(manager.objects_list or DEFAULT_OBJECT_LIST)
+            self.objectsView.addItems(list(set(manager.objects_list)) or DEFAULT_OBJECT_LIST)
         LOG.debug('context loaded')
 
     def save_context(self):
@@ -78,18 +79,26 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
             manager.optimization = self.optimizationBox.isChecked()
             manager.scenes_periodicity = self.analysisSlider.value()
             manager.milliseconds_periodicity = self.periodicitySlider.value()
+
             if manager.objects_list is None:
                 manager.objects_list = DEFAULT_OBJECT_LIST
+
             manager.objects_list.clear()
-            for i in range(self.objectsView.count()):
-                manager.objects_list.append(self.objectsView.item(i).text())
+            manager.objects_list = list({self.objectsView.item(i).text()
+                                         for i in range(self.objectsView.count())})
         LOG.debug('context saved')
 
     def reload_conditional_format(self):
         LOG.debug('reloading conditional format')
         self.analysisSlider.setVisible(self.optimizationBox.isChecked())
         self.periodicitySlider.setVisible(not self.optimizationBox.isChecked())
-        self.addButton.setVisible(not self.objectEdit.text().strip() == "")
+
+        word_input = self.objectEdit.text().strip()
+        correct_input = bool(re.fullmatch("[a-z]+", word_input))
+        duplicate_input = word_input in [self.objectsView.item(i).text()
+                                         for i in range(self.objectsView.count())]
+
+        self.addButton.setVisible(correct_input and not duplicate_input)
         self.removeButton.setVisible(self.objectsView.count() > 0)
         self.nextButton.setVisible(self.check_data())
         LOG.debug('conditional format reloaded')
