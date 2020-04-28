@@ -34,14 +34,6 @@ class ResumeOptions(QtWidgets.QMainWindow, ModelInterface):
     configurations : dict
         the dict with all the context configs
 
-    Methods
-    -------
-    update_scenes_analysis_progress_bar(value)
-        update the progress bar of the scenes analysis
-    update_objects_analysis_progress_bar(value)
-        update the progress bar of the objects analysis
-    update_subtitles_analysis_progress_bar(value)
-        update the progress bar of the subtitles analysis
     """
 
     configurations = dict()
@@ -74,45 +66,3 @@ class ResumeOptions(QtWidgets.QMainWindow, ModelInterface):
         self.resumeOptionsLabel.setText(json.dumps(self.configurations, indent=4))
 
         LOG.debug('contexts loaded')
-
-    def update_scenes_analysis_progress_bar(self, value):
-        """
-        Method that update the progress bar of the scenes analysis.
-
-        Parameters
-        ----------
-        value : int
-            the progress bar value (0 - 100)
-        """
-
-        LOG.debug('updating scenes analysis progress bar')
-        self.sceneAnalysisBar.setValue(value)
-        LOG.debug('scenes analysis progress bar updated: %s / 100', value)
-
-    def update_objects_analysis_progress_bar(self, value):
-        """
-        Method that update the progress bar of the objects analysis.
-
-        Parameters
-        ----------
-        value : int
-            the progress bar value (0 - 100)
-        """
-
-        LOG.debug('updating objects analysis progress bar')
-        self.objectAnalysisBar.setValue(value)
-        LOG.debug('objects analysis progress bar updated: %s / 100', value)
-
-    def update_subtitles_analysis_progress_bar(self, value):
-        """
-        Method that update the progress bar of the subtitles analysis.
-
-        Parameters
-        ----------
-        value : int
-            the progress bar value (0 - 100)
-        """
-
-        LOG.debug('updating subtitles analysis progress bar')
-        self.subtitleAnalysisBar.setValue(value)
-        LOG.debug('subtitles analysis progress bar updated: %s / 100', value)

@@ -83,14 +83,6 @@ class SubtitlesOptions(QtWidgets.QMainWindow, ModelInterface):
     path : str
         the subtitles path
 
-    Methods
-    -------
-    load_subtitle()
-        asks to the user the subtitles path
-    update_scenes_analysis_progress_bar(value)
-        update the progress bar of the scenes analysis
-    update_objects_analysis_progress_bar(value)
-        update the progress bar of the objects analysis
     """
 
     path = None
@@ -201,31 +193,3 @@ class SubtitlesOptions(QtWidgets.QMainWindow, ModelInterface):
 
         self.reload_conditional_format()
         LOG.info('subtitle path: %s', self.path)
-
-    def update_scenes_analysis_progress_bar(self, value):
-        """
-        Method that update the progress bar of the scenes analysis.
-
-        Parameters
-        ----------
-        value : int
-            the progress bar value (0 - 100)
-        """
-
-        LOG.debug('updating scenes analysis progress bar')
-        self.sceneAnalysisBar.setValue(value)
-        LOG.debug('scenes analysis progress bar updated: %s / 100', value)
-
-    def update_objects_analysis_progress_bar(self, value):
-        """
-        Method that update the progress bar of the objects analysis.
-
-        Parameters
-        ----------
-        value : int
-            the progress bar value (0 - 100)
-        """
-
-        LOG.debug('updating objects analysis progress bar')
-        self.objectAnalysisBar.setValue(value)
-        LOG.debug('objects analysis progress bar updated: %s / 100', value)

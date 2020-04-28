@@ -39,8 +39,6 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
         add an object to the list of objects
     remove_object()
         remove an object from the list of objects
-    update_scenes_analysis_progress_bar(value)
-        update the progress bar of the scenes analysis
     """
 
     def __init__(self, *args, **kwargs):
@@ -125,17 +123,3 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
         item = self.objectsView.takeItem(self.objectsView.currentRow())
         LOG.info('item %s removed', item)
         self.reload_conditional_format()
-
-    def update_scenes_analysis_progress_bar(self, value):
-        """
-        Method that update the progress bar of the scenes analysis.
-
-        Parameters
-        ----------
-        value : int
-            the progress bar value (0 - 100)
-        """
-
-        LOG.debug('updating scenes analysis progress bar')
-        self.sceneAnalysisBar.setValue(value)
-        LOG.debug('scenes analysis progress bar updated: %s / 100', value)

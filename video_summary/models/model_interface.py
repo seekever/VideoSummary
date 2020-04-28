@@ -31,6 +31,14 @@ class ModelInterface:
         reload the format of the conditional widgets
     check_data()
         check if all context data is correct
+    update_scenes_analysis_progress_bar(value)
+        update the progress bar of the scenes analysis
+    update_objects_analysis_progress_bar(value)
+        update the progress bar of the objects analysis
+    update_subtitles_analysis_progress_bar(value)
+        update the progress bar of the subtitles analysis
+    update_resume_progress_bar(value)
+        update the progress bar of the resume
     previous_window()
         save context and pass to the previous window
     next_window()
@@ -56,6 +64,62 @@ class ModelInterface:
 
     def check_data(self):
         """ The method to check if all context data is correct."""
+
+    def update_scenes_analysis_progress_bar(self, value):
+        """
+        Method that update the progress bar of the scenes analysis.
+
+        Parameters
+        ----------
+        value : int
+            the progress bar value (0 - 100)
+        """
+
+        LOG.debug('updating scenes analysis progress bar')
+        self.sceneAnalysisBar.setValue(value)
+        LOG.debug('scenes analysis progress bar updated: %s / 100', value)
+
+    def update_objects_analysis_progress_bar(self, value):
+        """
+        Method that update the progress bar of the objects analysis.
+
+        Parameters
+        ----------
+        value : int
+            the progress bar value (0 - 100)
+        """
+
+        LOG.debug('updating objects analysis progress bar')
+        self.objectAnalysisBar.setValue(value)
+        LOG.debug('objects analysis progress bar updated: %s / 100', value)
+
+    def update_subtitles_analysis_progress_bar(self, value):
+        """
+        Method that update the progress bar of the subtitles analysis.
+
+        Parameters
+        ----------
+        value : int
+            the progress bar value (0 - 100)
+        """
+
+        LOG.debug('updating subtitles analysis progress bar')
+        self.subtitleAnalysisBar.setValue(value)
+        LOG.debug('subtitles analysis progress bar updated: %s / 100', value)
+
+    def update_resume_progress_bar(self, value):
+        """
+        Method that update the progress bar of the resume.
+
+        Parameters
+        ----------
+        value : int
+            the progress bar value (0 - 100)
+        """
+
+        LOG.debug('updating resume progress bar')
+        self.resumeBar.setValue(value)
+        LOG.debug('resume progress bar updated: %s / 100', value)
 
     def previous_window(self):
         """ Method that save context and pass to the previous window."""
