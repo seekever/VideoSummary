@@ -9,6 +9,7 @@ from video_summary.models.general_options_model import GeneralOptions
 from video_summary.models.main_window_model import MainWindow
 from video_summary.models.objects_options_model import ObjectsOptions
 from video_summary.models.resume_options_model import ResumeOptions
+from video_summary.models.resume_result_model import ResumeResult
 from video_summary.models.resume_window_model import ResumeWindow
 from video_summary.models.subtitles_options_model import SubtitlesOptions
 
@@ -48,6 +49,7 @@ def main():
     subtitles_options = SubtitlesOptions()
     resume_options = ResumeOptions()
     resume_window = ResumeWindow()
+    resume_result = ResumeResult()
 
     # Signals
     main_window.next.connect(lambda: load_window(general_options))
@@ -60,6 +62,8 @@ def main():
     resume_options.previous.connect(lambda: load_window(subtitles_options))
     resume_options.next.connect(lambda: load_window(resume_window))
     resume_window.previous.connect(lambda: load_window(resume_options))
+    resume_window.next.connect(lambda: load_window(resume_result))
+    resume_result.next.connect(lambda: load_window(main_window))
 
     load_window(main_window)
 
