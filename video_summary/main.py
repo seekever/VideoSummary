@@ -3,15 +3,7 @@
 import logging
 import sys
 
-from PyQt5.QtWidgets import QApplication
-
-from video_summary.models.general_options_model import GeneralOptions
-from video_summary.models.main_window_model import MainWindow
-from video_summary.models.objects_options_model import ObjectsOptions
-from video_summary.models.resume_options_model import ResumeOptions
-from video_summary.models.resume_result_model import ResumeResult
-from video_summary.models.resume_window_model import ResumeWindow
-from video_summary.models.subtitles_options_model import SubtitlesOptions
+from video_summary.controller.controller import Controller
 
 # Logger
 LOGGER_NAME = 'App'
@@ -29,47 +21,5 @@ SH = logging.StreamHandler(sys.stdout)
 SH.setFormatter(logging.Formatter(LOGGER_FORMAT))
 LOG.addHandler(SH)
 
-
-def load_window(window):
-    """ Method that prepare and show a window."""
-    window.load_context()
-    window.reload_conditional_format()
-    window.show()
-
-
-def main():
-    """ Method that controls the application."""
-    LOG.info('starting app')
-    app = QApplication(sys.argv)
-
-    # Windows
-    main_window = MainWindow()
-    general_options = GeneralOptions()
-    objects_options = ObjectsOptions()
-    subtitles_options = SubtitlesOptions()
-    resume_options = ResumeOptions()
-    resume_window = ResumeWindow()
-    resume_result = ResumeResult()
-
-    # Signals
-    main_window.next.connect(lambda: load_window(general_options))
-    general_options.previous.connect(lambda: load_window(main_window))
-    general_options.next.connect(lambda: load_window(objects_options))
-    objects_options.previous.connect(lambda: load_window(general_options))
-    objects_options.next.connect(lambda: load_window(subtitles_options))
-    subtitles_options.previous.connect(lambda: load_window(objects_options))
-    subtitles_options.next.connect(lambda: load_window(resume_options))
-    resume_options.previous.connect(lambda: load_window(subtitles_options))
-    resume_options.next.connect(lambda: load_window(resume_window))
-    resume_window.previous.connect(lambda: load_window(resume_options))
-    resume_window.next.connect(lambda: load_window(resume_result))
-    resume_result.next.connect(lambda: load_window(main_window))
-
-    load_window(main_window)
-
-    app.exec_()
-    LOG.info('ending app')
-
-
 if __name__ == '__main__':
-    main()
+    Controller()
