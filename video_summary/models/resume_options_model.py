@@ -9,6 +9,7 @@ from video_summary.context.general_context import GeneralContext
 from video_summary.context.objects_context import ObjectsContext
 from video_summary.context.scenes_context import ScenesContext
 from video_summary.context.subtitles_context import SubtitlesContext
+from video_summary.controller.threads_controller import ThreadsController
 from video_summary.models.model_interface import ModelInterface
 
 # Paths
@@ -47,6 +48,9 @@ class ResumeOptions(QtWidgets.QMainWindow, ModelInterface):
 
         self.previousButton.clicked.connect(self.previous_window)
         self.nextButton.clicked.connect(self.next_window)
+
+        ThreadsController.scenes_analysis_thread.progress.connect(
+            self.update_scenes_analysis_progress_bar)
 
         self.update_scenes_analysis_progress_bar(0)
         self.update_objects_analysis_progress_bar(0)

@@ -15,7 +15,7 @@ from video_summary.models.resume_window_model import ResumeWindow
 from video_summary.models.subtitles_options_model import SubtitlesOptions
 
 # Logger
-LOGGER_NAME = 'App.Controller'
+LOGGER_NAME = 'App.Controllers.Windows'
 LOG = logging.getLogger(LOGGER_NAME)
 
 
@@ -27,7 +27,7 @@ def load_window(window):
     window.show()
 
 
-class Controller:
+class WindowsController:
     """
     The class for the window's controller.
 

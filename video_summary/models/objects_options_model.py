@@ -5,8 +5,10 @@ import os
 import re
 
 from PyQt5 import QtWidgets, uic
+from PyQt5.QtWidgets import QFileDialog
 
 from video_summary.context.objects_context import ObjectsContext
+from video_summary.controller.threads_controller import ThreadsController
 from video_summary.models.model_interface import ModelInterface
 
 # Paths
@@ -54,6 +56,9 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
         self.removeButton.clicked.connect(self.remove_object)
         self.optimizationBox.toggled.connect(self.reload_conditional_format)
         self.objectEdit.textChanged.connect(self.reload_conditional_format)
+
+        ThreadsController.scenes_analysis_thread.progress.connect(
+            self.update_scenes_analysis_progress_bar)
 
         self.update_scenes_analysis_progress_bar(0)
 

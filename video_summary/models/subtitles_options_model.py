@@ -7,6 +7,7 @@ from PyQt5 import QtWidgets, uic
 from PyQt5.QtWidgets import QFileDialog
 
 from video_summary.context.subtitles_context import SubtitlesContext, VectoringType, Languages
+from video_summary.controller.threads_controller import ThreadsController
 from video_summary.models.model_interface import ModelInterface
 
 # Paths
@@ -105,6 +106,9 @@ class SubtitlesOptions(QtWidgets.QMainWindow, ModelInterface):
 
         for mode in Languages:
             self.subtitlesLanguagesBox.addItem(TRANSLATE_LANGUAGE.get(mode), userData=mode)
+
+        ThreadsController.scenes_analysis_thread.progress.connect(
+            self.update_scenes_analysis_progress_bar)
 
         self.update_scenes_analysis_progress_bar(0)
         self.update_objects_analysis_progress_bar(0)

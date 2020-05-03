@@ -6,6 +6,7 @@ import os
 from PyQt5 import uic, QtWidgets
 
 from video_summary.context.general_context import ResumeMode, GeneralContext
+from video_summary.controller.threads_controller import ThreadsController
 from video_summary.models.model_interface import ModelInterface
 
 # Paths
@@ -75,3 +76,12 @@ class GeneralOptions(QtWidgets.QMainWindow, ModelInterface):
         LOG.debug('reloading conditional format')
         self.scenesDifSlider.setVisible(self.scenesDetectionBox.isChecked())
         LOG.debug('conditional format reloaded')
+
+    def next_window(self):
+        super().next_window()
+        if ThreadsController.scenes_analysis_thread.isRunning():
+            LOG.info('restarting scenes analysis thread')
+            ThreadsController.scenes_analysis_thread.restart_thread()
+        else:
+            LOG.info('starting scenes analysis thread')
+            ThreadsController.scenes_analysis_thread.start()

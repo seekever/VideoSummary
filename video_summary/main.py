@@ -3,7 +3,8 @@
 import logging
 import sys
 
-from video_summary.controller.controller import Controller
+from video_summary.controller.threads_controller import ThreadsController
+from video_summary.controller.windows_controller import WindowsController
 
 # Logger
 LOGGER_NAME = 'App'
@@ -22,4 +23,5 @@ SH.setFormatter(logging.Formatter(LOGGER_FORMAT))
 LOG.addHandler(SH)
 
 if __name__ == '__main__':
-    Controller()
+    WindowsController()
+    ThreadsController()
