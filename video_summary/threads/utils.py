@@ -9,7 +9,7 @@ def load_video(video_path):
 
     ...
 
-    Attributes
+    Parameters
     ----------
     video_path : str
         the video path
@@ -29,7 +29,7 @@ def get_sec(time_str):
 
     ...
 
-    Attributes
+    Parameters
     ----------
     time_str : str
         the string time with format HH:mm:ss
@@ -50,7 +50,7 @@ def get_time_from_line(string):
 
     ...
 
-    Attributes
+    Parameters
     ----------
     string : str
         the string time with format HH:mm:ss
@@ -64,5 +64,5 @@ def get_time_from_line(string):
     time_ind = string.find("time=")
     bitrate_ind = string.find("bitrate=")
     if time_ind >= 0:
-        return string[time_ind + len(time_ind):bitrate_ind]
+        return string[time_ind + 5:bitrate_ind]
     return None

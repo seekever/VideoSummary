@@ -41,6 +41,7 @@ class MainWindow(QtWidgets.QMainWindow, ModelInterface):
     path = None
 
     def __init__(self, *args, **kwargs):
+        LOG.debug('initializing main window model')
         super().__init__(*args, *kwargs)
 
         uic.loadUi(TEMPLATE_PATH, self)
@@ -49,6 +50,7 @@ class MainWindow(QtWidgets.QMainWindow, ModelInterface):
 
         self.loadVideoButton.clicked.connect(self.load_video)
         self.nextButton.clicked.connect(self.next_window)
+        LOG.info('main window model initialized')
 
     def load_context(self):
         LOG.debug('loading context')

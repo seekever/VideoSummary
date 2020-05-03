@@ -44,6 +44,7 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
     """
 
     def __init__(self, *args, **kwargs):
+        LOG.debug('initializing objects options window model')
         super().__init__(*args, *kwargs)
 
         uic.loadUi(TEMPLATE_PATH, self)
@@ -61,6 +62,7 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
             self.update_scenes_analysis_progress_bar)
 
         self.update_scenes_analysis_progress_bar(0)
+        LOG.info('objects options window model initialized')
 
     def load_context(self):
         LOG.debug('loading context')

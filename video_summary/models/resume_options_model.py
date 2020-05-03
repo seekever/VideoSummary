@@ -40,6 +40,7 @@ class ResumeOptions(QtWidgets.QMainWindow, ModelInterface):
     configurations = dict()
 
     def __init__(self, *args, **kwargs):
+        LOG.debug('initializing resume options window model')
         super().__init__(*args, *kwargs)
 
         uic.loadUi(TEMPLATE_PATH, self)
@@ -55,6 +56,7 @@ class ResumeOptions(QtWidgets.QMainWindow, ModelInterface):
         self.update_scenes_analysis_progress_bar(0)
         self.update_objects_analysis_progress_bar(0)
         self.update_subtitles_analysis_progress_bar(0)
+        LOG.info('resume options window model initialized')
 
     def load_context(self):
         LOG.debug('loading contexts')

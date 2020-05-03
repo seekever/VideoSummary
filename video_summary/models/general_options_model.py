@@ -37,6 +37,7 @@ class GeneralOptions(QtWidgets.QMainWindow, ModelInterface):
     """ The class for the general options window. """
 
     def __init__(self, *args, **kwargs):
+        LOG.debug('initializing general options window model')
         super().__init__(*args, *kwargs)
 
         uic.loadUi(TEMPLATE_PATH, self)
@@ -49,6 +50,7 @@ class GeneralOptions(QtWidgets.QMainWindow, ModelInterface):
 
         for mode in ResumeMode:
             self.resumeTypeBox.addItem(TRANSLATE.get(mode), userData=mode)
+        LOG.info('general options window model initialized')
 
     def load_context(self):
         LOG.debug('loading context')

@@ -89,6 +89,7 @@ class SubtitlesOptions(QtWidgets.QMainWindow, ModelInterface):
     path = None
 
     def __init__(self, *args, **kwargs):
+        LOG.debug('initializing subtitle options window model')
         super().__init__(*args, *kwargs)
 
         uic.loadUi(TEMPLATE_PATH, self)
@@ -112,6 +113,7 @@ class SubtitlesOptions(QtWidgets.QMainWindow, ModelInterface):
 
         self.update_scenes_analysis_progress_bar(0)
         self.update_objects_analysis_progress_bar(0)
+        LOG.info('subtitle options window model initialized')
 
     def load_context(self):
         LOG.debug('loading context')

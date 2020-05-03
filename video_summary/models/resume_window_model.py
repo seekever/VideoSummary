@@ -24,6 +24,7 @@ class ResumeWindow(QtWidgets.QMainWindow, ModelInterface):
     """The class for the resume window."""
 
     def __init__(self, *args, **kwargs):
+        LOG.debug('initializing resume window model')
         super().__init__(*args, *kwargs)
 
         uic.loadUi(TEMPLATE_PATH, self)
@@ -40,3 +41,4 @@ class ResumeWindow(QtWidgets.QMainWindow, ModelInterface):
         self.update_objects_analysis_progress_bar(0)
         self.update_subtitles_analysis_progress_bar(0)
         self.update_resume_progress_bar(0)
+        LOG.info('resume window model initialized')

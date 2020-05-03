@@ -25,6 +25,7 @@ def load_window(window):
     window.load_context()
     window.reload_conditional_format()
     window.show()
+    LOG.debug("window changed")
 
 
 class WindowsController:

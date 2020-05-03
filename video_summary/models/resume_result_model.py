@@ -33,6 +33,7 @@ class ResumeResult(QtWidgets.QMainWindow, ModelInterface):
     """
 
     def __init__(self, *args, **kwargs):
+        LOG.debug('initializing resume result window model')
         super().__init__(*args, *kwargs)
 
         uic.loadUi(TEMPLATE_PATH, self)
@@ -41,6 +42,7 @@ class ResumeResult(QtWidgets.QMainWindow, ModelInterface):
 
         self.downloadButton.clicked.connect(self.download_video)
         self.restartButton.clicked.connect(self.next_window)
+        LOG.info('resume result window model initialized')
 
     def download_video(self):
         """ Method that downloads the final video."""
