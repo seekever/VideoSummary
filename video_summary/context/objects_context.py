@@ -14,6 +14,9 @@ OBJECTS_LIST = "objectsList"
 OPTIMIZATION = "optimization"
 MILLISECONDS_PERIODICITY = "millisecondsPeriodicity"
 SCENES_PERIODICITY = "scenesPeriodicity"
+YOLO_WEIGHTS_PATH = "yoloWeightsPath"
+YOLO_CFG_PATH = "yoloCfgPath"
+YOLO_NAMES_PATH = "yoloNamesPath"
 
 # Logger
 LOGGER_NAME = 'App.Context.Objects'
@@ -42,6 +45,12 @@ class ObjectsContext:
         the analysis periodicity in milliseconds
     scenes_periodicity : int
         the number of analysis per scene
+    yolo_weights_path : str
+        the Yolo's weights path
+    yolo_cfg_path : str
+        the Yolo's cfg path
+    yolo_names_path : str
+        the Yolo's names path
 
     """
 
@@ -54,6 +63,9 @@ class ObjectsContext:
         self.optimization = None
         self.milliseconds_periodicity = None
         self.scenes_periodicity = None
+        self.yolo_weights_path = None
+        self.yolo_cfg_path = None
+        self.yolo_names_path = None
         LOG.debug('objects context started')
 
     def __enter__(self):
@@ -75,6 +87,9 @@ class ObjectsContext:
         self.optimization = self.config.get(OPTIMIZATION)
         self.milliseconds_periodicity = self.config.get(MILLISECONDS_PERIODICITY)
         self.scenes_periodicity = self.config.get(SCENES_PERIODICITY)
+        self.yolo_weights_path = self.config.get(YOLO_WEIGHTS_PATH)
+        self.yolo_cfg_path = self.config.get(YOLO_CFG_PATH)
+        self.yolo_names_path = self.config.get(YOLO_NAMES_PATH)
         LOG.debug('objects context loaded')
 
         return self
@@ -87,6 +102,9 @@ class ObjectsContext:
             self.config[OPTIMIZATION] = self.optimization
             self.config[MILLISECONDS_PERIODICITY] = self.milliseconds_periodicity
             self.config[SCENES_PERIODICITY] = self.scenes_periodicity
+            self.config[YOLO_WEIGHTS_PATH] = self.yolo_weights_path
+            self.config[YOLO_CFG_PATH] = self.yolo_cfg_path
+            self.config[YOLO_NAMES_PATH] = self.yolo_names_path
             LOG.debug('objects context saved')
 
             LOG.debug('writing objects context')

@@ -85,6 +85,9 @@ class GeneralContextTest(unittest.TestCase):
             manager.optimization = False
             manager.milliseconds_periodicity = 200
             manager.scenes_periodicity = 3
+            manager.yolo_weights_path = "yolo/path"
+            manager.yolo_cfg_path = None
+            manager.yolo_names_path = ""
 
         with ObjectsContext() as manager:
             self.assertEqual([5, 41], manager.objects_dict["cat"])
@@ -92,6 +95,9 @@ class GeneralContextTest(unittest.TestCase):
             self.assertFalse(manager.optimization)
             self.assertEqual(200, manager.milliseconds_periodicity)
             self.assertEqual(3, manager.scenes_periodicity)
+            self.assertEqual("yolo/path", manager.yolo_weights_path)
+            self.assertIsNone(manager.yolo_cfg_path)
+            self.assertEqual("", manager.yolo_names_path)
 
             manager.objects_dict["dog"].remove(23)
             manager.objects_dict["tree"] = [7, 33]
@@ -101,6 +107,9 @@ class GeneralContextTest(unittest.TestCase):
             manager.optimization = True
             manager.milliseconds_periodicity += 100
             manager.scenes_periodicity -= 1
+            manager.yolo_weights_path += "/test/weights"
+            manager.yolo_cfg_path = "/test/cfg"
+            manager.yolo_names_path += "/test/names"
 
         with ObjectsContext() as manager:
             self.assertEqual([10, 45], manager.objects_dict["dog"])
@@ -110,6 +119,9 @@ class GeneralContextTest(unittest.TestCase):
             self.assertTrue(manager.optimization)
             self.assertEqual(300, manager.milliseconds_periodicity)
             self.assertEqual(2, manager.scenes_periodicity)
+            self.assertEqual("yolo/path/test/weights", manager.yolo_weights_path)
+            self.assertEqual("/test/cfg", manager.yolo_cfg_path)
+            self.assertEqual("/test/names", manager.yolo_names_path)
         LOG.info('ending objects context test')
 
     def test_subtitles_context(self):

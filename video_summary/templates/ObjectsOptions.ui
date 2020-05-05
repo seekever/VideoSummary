@@ -179,6 +179,45 @@
      <string>Remove</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="selectYoloWeightsButton">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>300</y>
+      <width>121</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Select Yolo weights</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="selectYoloCfgButton">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>300</y>
+      <width>121</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Select Yolo cfg</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="selectYoloNamesButton">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>300</y>
+      <width>121</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Select Yolo names</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
