@@ -9,7 +9,7 @@ from PyQt5.QtCore import QThread
 
 from video_summary.context.general_context import GeneralContext
 from video_summary.context.scenes_context import ScenesContext
-from video_summary.threads.utils import load_video, get_time_from_line, get_sec
+from video_summary.threads.utils import load_video, get_time_from_line, get_sec_from_string
 
 # Logger
 LOGGER_NAME = 'App.Threads.SceneAnalysis'
@@ -78,7 +78,7 @@ class ScenesAnalysis(QThread):
                         string = line.decode("utf-8")
                         time_str = get_time_from_line(string)
                         if time_str is not None:
-                            actual_time = get_sec(time_str)
+                            actual_time = get_sec_from_string(time_str)
                             if self.active:
                                 self.progress.emit(int(actual_time / clip.duration * 100))
                         file.writelines(string)

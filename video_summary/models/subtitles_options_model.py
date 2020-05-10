@@ -141,7 +141,7 @@ class SubtitlesOptions(QtWidgets.QMainWindow, ModelInterface):
             else:
                 self.removeStopWordsBox.setChecked(DEFAULT_REMOVE_STOPWORDS)
 
-            if manager.remove_capital_letters:
+            if manager.remove_capital_letters is not None:
                 self.removeCapitalLettersBox.setChecked(manager.remove_capital_letters)
             else:
                 self.removeCapitalLettersBox.setChecked(DEFAULT_CAPITAL_LETTERS)
@@ -201,3 +201,12 @@ class SubtitlesOptions(QtWidgets.QMainWindow, ModelInterface):
 
         self.reload_conditional_format()
         LOG.info('subtitle path: %s', self.path)
+
+    def next_window(self):
+        super().next_window()
+        if ThreadsController.subtitles_analysis_thread.isRunning():
+            LOG.info('restarting subtitles analysis thread')
+            ThreadsController.subtitles_analysis_thread.restart_thread()
+        else:
+            LOG.info('starting subtitles analysis thread')
+            ThreadsController.subtitles_analysis_thread.start()

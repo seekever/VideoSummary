@@ -3,3 +3,7 @@ PyQt5~=5.14.2
 moviepy~=1.0.2
 opencv-python~=4.2.0.34
 numpy~=1.18.4
+pysrt~=1.1.2
+Unidecode~=1.1.1
+scikit-learn~=0.22.2.post1
+nltk~=3.5

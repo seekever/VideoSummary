@@ -54,6 +54,8 @@ class ResumeOptions(QtWidgets.QMainWindow, ModelInterface):
             self.update_scenes_analysis_progress_bar)
         ThreadsController.objects_analysis_thread.progress.connect(
             self.update_objects_analysis_progress_bar)
+        ThreadsController.subtitles_analysis_thread.progress.connect(
+            self.update_subtitles_analysis_progress_bar)
 
         self.update_scenes_analysis_progress_bar(0)
         self.update_objects_analysis_progress_bar(0)

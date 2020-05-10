@@ -1,7 +1,30 @@
 """Module with the utils for the threads"""
+
+from copy import copy
+
 import cv2
 import numpy as np
+import pysrt
+import unidecode
 from moviepy.editor import VideoFileClip
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+
+from video_summary.context.subtitles_context import VectoringType
+from video_summary.objects.subtitle import Subtitle
+
+# Switcher
+VECTORING_SWITCHER = {
+    VectoringType.COUNTERS: CountVectorizer(),
+    VectoringType.BINARIES_COUNTERS: CountVectorizer(binary=True),
+    VectoringType.N_GRAM_COUNTERS: CountVectorizer(ngram_range=(1, 4)),
+    VectoringType.TF_WITH_NORMALIZATION_L1: TfidfVectorizer(norm='l1', use_idf=False),
+    VectoringType.TF_WITH_NORMALIZATION_L2: TfidfVectorizer(norm='l2', use_idf=False),
+    VectoringType.TF_IDF: TfidfVectorizer(norm=None, smooth_idf=False),
+    VectoringType.TF_IDF_WITH_SMOOTHING_IDF: TfidfVectorizer(norm=None, smooth_idf=True),
+    VectoringType.TF_IDF_WITH_SMOOTHING_IDF_AND_NORMALIZATION_L1:
+        TfidfVectorizer(norm='l1', smooth_idf=True),
+    VectoringType.TF_IDF_WITH_SMOOTHING_IDF_AND_NORMALIZATION_L2: TfidfVectorizer()
+}
 
 
 def load_video(video_path):
@@ -24,7 +47,7 @@ def load_video(video_path):
     return VideoFileClip(video_path)
 
 
-def get_sec(time_str):
+def get_sec_from_string(time_str):
     """
     Method to get seconds from string time.
 
@@ -43,6 +66,27 @@ def get_sec(time_str):
 
     hours, minutes, seconds = time_str.split(':')
     return int(hours) * 3600 + int(minutes) * 60 + float(seconds)
+
+
+def get_milli_sec_from_sub(time_sub):
+    """
+    Method to get seconds from SubRipTime.
+
+    ...
+
+    Parameters
+    ----------
+    time_sub : SubRipTime
+        the SubRipTime object with the time
+
+    Returns
+    -------
+    float
+        the time_sub in seconds
+    """
+
+    return float((time_sub.hours * 3600 + time_sub.minutes * 60 + time_sub.seconds)
+                 * 1000 + time_sub.milliseconds)
 
 
 def get_time_from_line(string):
@@ -139,3 +183,175 @@ def detect_objects(frame, net, output_layers, classes):
             class_id = np.argmax(scores)
             result.append(classes[class_id])
     return set(result)
+
+
+def fuse_subtitles(first_sub, second_sub):
+    """
+    Method to fuse two subtitles.
+
+    ...
+
+    Parameters
+    ----------
+    first_sub : Subtitle
+        the first subtitle
+    second_sub : Subtitle
+        the second subtitle
+
+    Returns
+    -------
+    Subtitle
+        a new subtitle with the fuse's result
+
+    """
+
+    if first_sub is None:
+        return second_sub
+    if second_sub is None:
+        return first_sub
+
+    result = copy(first_sub)
+
+    if result.text is None:
+        result.text = second_sub.text
+    elif second_sub.text is not None:
+        result.text += " " + second_sub.text
+
+    if result.start is None:
+        result.start = second_sub.start
+    elif second_sub.start is not None:
+        result.start = min(result.start, second_sub.start)
+
+    if result.end is None:
+        result.end = second_sub.end
+    elif second_sub.end is not None:
+        result.end = max(result.end, second_sub.end)
+
+    if result.score is None:
+        result.score = second_sub.score
+    elif second_sub.score is not None:
+        result.score += second_sub.score
+
+    return result
+
+
+def join_phrases(subtitles_list):
+    """
+    Method to join the text of the successive subtitles.
+
+    ...
+
+    Parameters
+    ----------
+    subtitles_list : list
+        a subtitles list
+
+    Returns
+    -------
+    list
+        a new subtitles list with the successive subtitles joined
+
+    """
+
+    if subtitles_list is None:
+        return None
+
+    actual_sub = None
+    result = []
+    for sub in subtitles_list:
+        if sub is not None:
+            if actual_sub is None:
+                actual_sub = sub
+            else:
+                actual_sub = fuse_subtitles(actual_sub, sub)
+
+            if actual_sub.text is not None and actual_sub.text[-1] in '¡!.¿?':
+                result.append(actual_sub)
+                actual_sub = None
+    return result
+
+
+def clean_phrases(subtitles_list, remove_capital_letters=False, remove_stop_words=False,
+                  remove_punctuation=False, remove_accents=False, remove_all=False, stop_words=None,
+                  punctuation_signs=None):
+    """
+    Method to clean the text of the subtitles.
+
+    ...
+
+    Parameters
+    ----------
+    subtitles_list : list
+        a subtitles list
+    remove_capital_letters : bool
+        a boolean to activate the removal of capital letters
+    remove_stop_words : bool
+        a boolean to activate the removal of stop words
+    remove_punctuation : bool
+        a boolean to activate the removal of punctuations
+    remove_accents : bool
+        a boolean to activate the removal of accents
+    remove_all : bool
+        a boolean to activate all previous removals
+    stop_words : list
+        a list of strings with all the stop words to remove
+    punctuation_signs : list
+        a list of chars with all the punctuation signs to remove
+
+    Returns
+    -------
+    list
+        a new subtitles list with the text of the subtitles cleaned
+
+    """
+
+    if subtitles_list is None:
+        return None
+
+    result = []
+    if punctuation_signs is None:
+        punctuation_signs = []
+    punctuation_table = str.maketrans(
+        {key: None for key in punctuation_signs})
+
+    for sub in subtitles_list:
+        if sub is not None:
+            if sub.text is not None:
+                if remove_capital_letters or remove_all:
+                    sub.text = sub.text.lower()
+                if remove_stop_words or remove_all:
+                    sub.text = ' '.join([word for word in sub.text.split()
+                                         if word.lower() not in stop_words])
+                if remove_punctuation or remove_all:
+                    sub.text = sub.text.translate(punctuation_table)
+                if remove_accents or remove_all:
+                    sub.text = unidecode.unidecode(sub.text)
+            result.append(sub)
+    return result
+
+
+def load_subtitles(path):
+    """
+    Method to load the subtitles.
+
+    ...
+
+    Parameters
+    ----------
+    path : str
+        the subtitles' path
+
+    Returns
+    -------
+    list
+        a list of subtitles
+
+    """
+
+    subtitles = pysrt.open(path)
+    subtitles_list = []
+    for sub in subtitles:
+        sub_start = get_milli_sec_from_sub(sub.start)
+        sub_end = get_milli_sec_from_sub(sub.end)
+        subtitles_list.append(Subtitle(sub.text, sub_start, sub_end, None))
+    return subtitles_list
