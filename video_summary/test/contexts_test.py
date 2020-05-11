@@ -40,23 +40,27 @@ class GeneralContextTest(unittest.TestCase):
             manager.resume_mode = ResumeMode.SUBTITLES
             manager.detect_scenes = True
             manager.scenes_difference = 0.3
+            manager.resume_times = None
 
         with GeneralContext() as manager:
             self.assertEqual("test/path.mp4", manager.original_video_path)
             self.assertEqual(ResumeMode.SUBTITLES, manager.resume_mode)
             self.assertTrue(manager.detect_scenes)
             self.assertEqual(0.3, manager.scenes_difference)
+            self.assertIsNone(manager.resume_times)
 
             manager.original_video_path = None
             manager.resume_mode = ResumeMode.OBJECTS
             manager.detect_scenes = False
             manager.scenes_difference -= 0.05
+            manager.resume_times = [[1, 4], [6, 14], [20, 25]]
 
         with GeneralContext() as manager:
             self.assertIsNone(manager.original_video_path)
             self.assertEqual(ResumeMode.OBJECTS, manager.resume_mode)
             self.assertFalse(manager.detect_scenes)
             self.assertEqual(0.25, manager.scenes_difference)
+            self.assertEqual([6, 14], manager.resume_times[1])
         LOG.info('ending general context test')
 
     def test_scenes_context(self):

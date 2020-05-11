@@ -6,7 +6,7 @@ import unittest
 from copy import copy
 
 from video_summary.objects.subtitle import Subtitle
-from video_summary.threads.utils import fuse_subtitles, join_phrases, clean_phrases
+from video_summary.threads.utils import fuse_subtitles, join_phrases, clean_phrases, normalize_times
 
 # Logger
 LOGGER_NAME = 'Test.Utils'
@@ -29,7 +29,7 @@ class UtilsTest(unittest.TestCase):
 
     def test_fuse_subtitles(self):
         """Unit test that test that fuse subtitles method works."""
-        LOG.info('starting fuse subtitles test')
+        LOG.info('starting fuse subtitles\' test')
         subtitle_a = Subtitle("Hello", 10, 20, 2)
         subtitle_b = Subtitle("world!", 15, 25, 9)
         subtitle_c = Subtitle(None, 13, 23, None)
@@ -66,11 +66,11 @@ class UtilsTest(unittest.TestCase):
         subtitles_abc = fuse_subtitles(subtitles_ab, subtitle_c)
         self.assertEqual("Hello world!", subtitles_abc.text)
         self.assertEqual([10, 25], subtitles_abc.get_times())
-        LOG.info('ending fuse subtitles context test')
+        LOG.info('ending fuse subtitles\' test')
 
     def test_join_phrases(self):
         """Unit test that test that join phrases method works."""
-        LOG.info('starting join phrases test')
+        LOG.info('starting join phrases\' test')
         subtitle_a = Subtitle("Hello", None, None, None)
         subtitle_b = Subtitle("world!", None, None, None)
         subtitle_c = Subtitle("This is my", None, None, None)
@@ -85,11 +85,11 @@ class UtilsTest(unittest.TestCase):
 
         self.assertIsNone(join_phrases(None))
         self.assertEqual([], join_phrases([None, None, None]))
-        LOG.info('ending join phrases context test')
+        LOG.info('ending join phrases\' test')
 
     def test_clean_phrases(self):
         """Unit test that test that clean phrases method works."""
-        LOG.info('starting clean phrases test')
+        LOG.info('starting clean phrases\' test')
         stop_words = ['my', 'this', 'is', 'are', 'there']
         punctuation_signs = ['!', '.']
 
@@ -134,7 +134,26 @@ class UtilsTest(unittest.TestCase):
         self.assertEqual("in a subtitle o accented characters", result_all[1].text)
 
         self.assertIsNone(clean_phrases(None))
-        LOG.info('ending clean phrases context test')
+        LOG.info('ending clean phrases\' test')
+
+    def test_normalize_times(self):
+        """Unit test that test that normalize times' method works."""
+        LOG.info('starting normalize times\' test')
+        times_a = [[0, 5], [5, 15], [10, 12], [18, 25], [20, 30]]
+        times_b = [[0, 5], None, [18, 25], [20, 30]]
+        times_c = [None, None, None]
+
+        result_a = normalize_times(times_a)
+        self.assertEqual([[0, 15], [18, 30]], result_a)
+
+        result_b = normalize_times(times_b)
+        self.assertEqual([[0, 5], [18, 30]], result_b)
+
+        result_c = normalize_times(times_c)
+        self.assertEqual([], result_c)
+
+        self.assertIsNone(normalize_times(None))
+        LOG.info('ending normalize times\' test')
 
 
 if __name__ == '__main__':

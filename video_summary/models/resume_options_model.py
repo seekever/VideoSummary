@@ -76,3 +76,12 @@ class ResumeOptions(QtWidgets.QMainWindow, ModelInterface):
         self.resumeOptionsLabel.setText(json.dumps(self.configurations, indent=4))
 
         LOG.debug('contexts loaded')
+
+    def next_window(self):
+        super().next_window()
+        if ThreadsController.resume_thread.isRunning():
+            LOG.info('restarting resume thread')
+            ThreadsController.resume_thread.restart_thread()
+        else:
+            LOG.info('starting resume thread')
+            ThreadsController.resume_thread.start()

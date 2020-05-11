@@ -353,5 +353,40 @@ def load_subtitles(path):
     for sub in subtitles:
         sub_start = get_milli_sec_from_sub(sub.start)
         sub_end = get_milli_sec_from_sub(sub.end)
-        subtitles_list.append(Subtitle(sub.text, sub_start, sub_end, None))
+        subtitles_list.append(Subtitle(sub.text, sub_start, sub_end, -1))
     return subtitles_list
+
+
+def normalize_times(times):
+    """
+    Method to normalize a list of times.
+
+    ...
+
+    Parameters
+    ----------
+    times : list
+        the times' list with int pairs (start, end)
+
+    Returns
+    -------
+    list
+        the times' list with int pairs (start, end) normalized
+
+    """
+
+    if times is None:
+        return None
+
+    result = []
+    last = -99
+    for time in times:
+        if time is not None:
+            if last + 1 < time[0]:
+                result.append(time)
+            else:
+                last = max(last, time[1])
+                result[-1][1] = last
+            last = result[-1][1]
+
+    return result
