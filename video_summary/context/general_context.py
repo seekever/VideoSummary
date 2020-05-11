@@ -51,7 +51,7 @@ class GeneralContext:
     scenes_difference : float
         the difference percentage between scenes
     resume_times : list
-        a list of pair of ints (start, end)
+        a list of pair of ints (start, end) in milliseconds
 
     """
 

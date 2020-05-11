@@ -81,9 +81,11 @@ class GeneralOptions(QtWidgets.QMainWindow, ModelInterface):
 
     def next_window(self):
         super().next_window()
-        if ThreadsController.scenes_analysis_thread.isRunning():
-            LOG.info('restarting scenes analysis thread')
-            ThreadsController.scenes_analysis_thread.restart_thread()
-        else:
-            LOG.info('starting scenes analysis thread')
-            ThreadsController.scenes_analysis_thread.start()
+        with GeneralContext(read_only=True) as manager:
+            if manager.detect_scenes:
+                if ThreadsController.scenes_analysis_thread.isRunning():
+                    LOG.info('restarting scenes analysis thread')
+                    ThreadsController.scenes_analysis_thread.restart_thread()
+                else:
+                    LOG.info('starting scenes analysis thread')
+                    ThreadsController.scenes_analysis_thread.start()

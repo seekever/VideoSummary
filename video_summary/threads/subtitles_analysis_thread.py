@@ -1,19 +1,13 @@
 """ The module for the subtitles analysis thread."""
 
 import logging
-import os
 
-import numpy as np
 from PyQt5 import QtCore
 from PyQt5.QtCore import QThread
 from nltk.corpus import stopwords
 
 from video_summary.context.subtitles_context import SubtitlesContext, Languages
-from video_summary.threads.utils import load_subtitles, join_phrases, \
-    clean_phrases, VECTORING_SWITCHER
-
-# Paths
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+from video_summary.threads.utils import *
 
 # Logger
 LOGGER_NAME = 'App.Threads.SubtitlesAnalysis'

@@ -29,7 +29,7 @@ LOG.addHandler(SH)
 SUBTITLES_PATH_TEST = "subtitles/path.srt"
 
 
-class GeneralContextTest(unittest.TestCase):
+class ContextTest(unittest.TestCase):
     """Class with all the context test methods."""
 
     def test_general_context(self):

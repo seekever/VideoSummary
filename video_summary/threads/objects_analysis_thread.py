@@ -31,7 +31,7 @@ class ObjectsAnalysis(QThread):
     progress : signal
         the signal to change the progress bar
     scenes_thread : thread
-        the thread of the previous process
+        the thread of the scene analysis process
 
     Methods
     -------
@@ -73,9 +73,13 @@ class ObjectsAnalysis(QThread):
                 clip = load_video(path)
                 LOG.debug('original video loaded')
 
+            # Wait to the previous thread's finish
+            if self.active:
+                LOG.debug('waiting previous process')
+                self.scenes_thread.wait()
+
             # Load scenes list
             if self.active:
-                self.scenes_thread.wait()
                 with ScenesContext(read_only=True) as manager:
                     LOG.debug('loading the scenes list')
                     scenes_list = manager.scenes_list
@@ -91,7 +95,6 @@ class ObjectsAnalysis(QThread):
 
                 # Get scenes to analyse
                 if self.active:
-                    LOG.debug('starting objects detection')
                     if manager.optimization:
                         LOG.debug('objects analysis optimization active')
                         milli_sec_to_analyse = []
@@ -107,6 +110,7 @@ class ObjectsAnalysis(QThread):
 
             # Detect objects and save them in ObjectsContext
             if self.active:
+                LOG.debug('starting objects detection')
                 with ObjectsContext() as manager:
                     manager.objects_dict = defaultdict(list)
                     for index, milli_sec in enumerate(milli_sec_to_analyse):
@@ -118,8 +122,7 @@ class ObjectsAnalysis(QThread):
                             self.progress.emit(index / len(milli_sec_to_analyse) * 100)
                         else:
                             break
-
-                    LOG.debug('objects detection ended')
+                LOG.debug('objects detection ended')
 
             if self.active:
                 self.progress.emit(100)

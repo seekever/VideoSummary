@@ -26,6 +26,12 @@ class Resume(QThread):
     ----------
     progress : signal
         the signal to change the progress bar
+    scenes_thread : thread
+        the thread of the scene analysis process
+    objects_thread : thread
+        the thread of the objects analysis process
+    subtitles_thread : thread
+        the thread of the subtitle analysis process
 
     Methods
     -------
@@ -65,6 +71,7 @@ class Resume(QThread):
 
             # Wait to the previous threads' finish
             if self.active:
+                LOG.debug('waiting previous process')
                 self.scenes_thread.wait()
                 self.objects_thread.wait()
                 self.subtitles_thread.wait()
@@ -80,42 +87,50 @@ class Resume(QThread):
             # Add the times of the subtitles
             if self.active:
                 if mode in (ResumeMode.SUBTITLES, ResumeMode.SUBTITLES_AND_OBJECTS):
+                    LOG.debug('adding subtitles times')
                     with SubtitlesContext(read_only=True) as manager:
                         result = sorted(manager.subtitles_list, key=lambda x: x.score, reverse=True)
-                        result = result[: int(len(result) * manager.resume_percentage)]
+                        result = result[: int(len(result) * manager.resume_percentage / 100)]
                         result = [x.get_times() for x in result]
+                    LOG.debug('subtitles times added')
                 self.progress.emit(40)
 
             # Add the times of the objects
             if self.active:
                 if mode in (ResumeMode.OBJECTS, ResumeMode.SUBTITLES_AND_OBJECTS):
+                    LOG.debug('adding objects times')
                     with ObjectsContext(read_only=True) as manager:
                         for key in list(
                                 set(manager.objects_list).intersection(manager.objects_dict.keys())):
                             object_times = manager.objects_dict.get(key)
                             for object_time in object_times:
                                 result.append([object_time, object_time])
+                    LOG.debug('objects times added')
                 self.progress.emit(60)
 
             # Adjust the times to the scenes
             if self.active:
                 if detect_scenes:
+                    LOG.debug('adjusting times to scenes')
                     with ScenesContext(read_only=True) as manager:
                         for index, x in enumerate(result):
                             scene_ini = [s for s in manager.scenes_list if x[0] <= s[1]][0]
                             result[index][0] = scene_ini[0]
                             scene_fin = [s for s in manager.scenes_list if x[1] <= s[1]][0]
                             result[index][1] = scene_fin[1]
+                    LOG.debug('times adjusted to scenes')
                 self.progress.emit(80)
 
             # Normalize and save resume times
             if self.active:
+                LOG.debug('normalizing times')
                 result = sorted(result, key=lambda x: x[0])
                 result = normalize_times(result)
                 with GeneralContext() as manager:
                     manager.resume_times = []
                     for x in result:
                         manager.resume_times.append(x)
+                LOG.debug('times normalized')
 
             if self.active:
                 self.progress.emit(100)
@@ -125,19 +140,22 @@ class Resume(QThread):
             if not self.restart:
                 break
 
-    def restart_thread(self):
-        """ Method that restart the resume\'s thread."""
-        self.deactivate_thread()
-        self.restart = True
-        self.progress.emit(0)
-        LOG.info('resume\'s thread restart activate')
 
-    def activate_thread(self):
-        """ Method that activate the resume\'s thread."""
-        self.active = True
-        LOG.info('resume\'s thread activate')
+def restart_thread(self):
+    """ Method that restart the resume\'s thread."""
+    self.deactivate_thread()
+    self.restart = True
+    self.progress.emit(0)
+    LOG.info('resume\'s thread restart activate')
 
-    def deactivate_thread(self):
-        """ Method that deactivate the resume\'s thread."""
-        self.active = False
-        LOG.info('resume\'s thread deactivate')
+
+def activate_thread(self):
+    """ Method that activate the resume\'s thread."""
+    self.active = True
+    LOG.info('resume\'s thread activate')
+
+
+def deactivate_thread(self):
+    """ Method that deactivate the resume\'s thread."""
+    self.active = False
+    LOG.info('resume\'s thread deactivate')
