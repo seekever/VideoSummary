@@ -1,7 +1,6 @@
 """Unit tests that test that contexts work."""
 
 import logging
-import sys
 import unittest
 
 from video_summary.context.general_context import GeneralContext, ResumeMode
@@ -12,18 +11,7 @@ from video_summary.objects.subtitle import Subtitle
 
 # Logger
 LOGGER_NAME = 'Test.Context'
-LOGGER_FILENAME = 'ContextTest.log'
-LOGGER_LEVEL = logging.DEBUG
-LOGGER_FORMAT = '%(asctime)s %(threadName)s %(levelname)-8s %(module)s: %(message)s'
-LOGGER_DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
-
-logging.basicConfig(filename=LOGGER_FILENAME, level=LOGGER_LEVEL,
-                    format=LOGGER_FORMAT, datefmt=LOGGER_DATE_FORMAT)
-
 LOG = logging.getLogger(LOGGER_NAME)
-SH = logging.StreamHandler(sys.stdout)
-SH.setFormatter(logging.Formatter(LOGGER_FORMAT))
-LOG.addHandler(SH)
 
 # Test constants
 SUBTITLES_PATH_TEST = "subtitles/path.srt"

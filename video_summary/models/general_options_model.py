@@ -77,6 +77,7 @@ class GeneralOptions(QtWidgets.QMainWindow, ModelInterface):
     def reload_conditional_format(self):
         LOG.debug('reloading conditional format')
         self.scenesDifSlider.setVisible(self.scenesDetectionBox.isChecked())
+        self.label_2.setVisible(self.scenesDetectionBox.isChecked())
         LOG.debug('conditional format reloaded')
 
     def next_window(self):

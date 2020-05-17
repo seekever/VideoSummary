@@ -48,3 +48,13 @@ class ResumeWindow(QtWidgets.QMainWindow, ModelInterface):
         self.update_subtitles_analysis_progress_bar(0)
         self.update_resume_progress_bar(0)
         LOG.info('resume window model initialized')
+
+    def reload_conditional_format(self):
+        LOG.debug('reloading conditional format')
+        self.nextButton.setVisible(self.resumeBar.value() == 100)
+        LOG.debug('conditional format reloaded')
+
+    def update_resume_progress_bar(self, value):
+        super().update_resume_progress_bar(value)
+        if value == 100:
+            self.reload_conditional_format()

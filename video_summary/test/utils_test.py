@@ -1,7 +1,6 @@
 """Unit tests that test that utils methods work."""
 
 import logging
-import sys
 import unittest
 from copy import copy
 
@@ -10,18 +9,7 @@ from video_summary.threads.utils import fuse_subtitles, join_phrases, clean_phra
 
 # Logger
 LOGGER_NAME = 'Test.Utils'
-LOGGER_FILENAME = 'UtilsTest.log'
-LOGGER_LEVEL = logging.DEBUG
-LOGGER_FORMAT = '%(asctime)s %(threadName)s %(levelname)-8s %(module)s: %(message)s'
-LOGGER_DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
-
-logging.basicConfig(filename=LOGGER_FILENAME, level=LOGGER_LEVEL,
-                    format=LOGGER_FORMAT, datefmt=LOGGER_DATE_FORMAT)
-
 LOG = logging.getLogger(LOGGER_NAME)
-SH = logging.StreamHandler(sys.stdout)
-SH.setFormatter(logging.Formatter(LOGGER_FORMAT))
-LOG.addHandler(SH)
 
 
 class UtilsTest(unittest.TestCase):

@@ -182,7 +182,7 @@
    <widget class="QPushButton" name="selectYoloWeightsButton">
     <property name="geometry">
      <rect>
-      <x>60</x>
+      <x>190</x>
       <y>300</y>
       <width>121</width>
       <height>29</height>
@@ -195,7 +195,7 @@
    <widget class="QPushButton" name="selectYoloCfgButton">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>320</x>
       <y>300</y>
       <width>121</width>
       <height>29</height>
@@ -208,7 +208,7 @@
    <widget class="QPushButton" name="selectYoloNamesButton">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>450</x>
       <y>300</y>
       <width>121</width>
       <height>29</height>
@@ -216,6 +216,45 @@
     </property>
     <property name="text">
      <string>Select Yolo names</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>10</y>
+      <width>111</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Objects to detect:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>380</y>
+      <width>141</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Scene analysis progress:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>60</y>
+      <width>201</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>*names in english and lowercases</string>
     </property>
    </widget>
   </widget>
