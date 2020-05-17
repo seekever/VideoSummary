@@ -12,6 +12,7 @@ CONFIG_PATH = os.path.join(ROOT_DIR, 'GeneralConfig.conf')
 
 # Strings for JSON
 ORIGINAL_VIDEO_PATH = "originalVideoPath"
+FINAL_VIDEO_PATH = "finalVideoPath"
 RESUME_MODE = "resumeMode"
 DETECT_SCENES = "detectScenes"
 SCENES_DIFFERENCE = "scenesDifference"
@@ -44,6 +45,8 @@ class GeneralContext:
         a dict with all the general settings
     original_video_path : str
         the original video's path
+    final_video_path : str
+        the final video's path
     resume_mode : int
         the resume mode (class ResumeMode)
     detect_scenes : bool
@@ -60,6 +63,7 @@ class GeneralContext:
         self.read_only = read_only
         self.config = None
         self.original_video_path = None
+        self.final_video_path = None
         self.resume_mode = None
         self.detect_scenes = None
         self.scenes_difference = None
@@ -81,6 +85,7 @@ class GeneralContext:
 
         LOG.debug('loading general context')
         self.original_video_path = self.config.get(ORIGINAL_VIDEO_PATH)
+        self.final_video_path = self.config.get(FINAL_VIDEO_PATH)
         self.resume_mode = self.config.get(RESUME_MODE)
         self.detect_scenes = self.config.get(DETECT_SCENES)
         self.scenes_difference = self.config.get(SCENES_DIFFERENCE)
@@ -93,6 +98,7 @@ class GeneralContext:
         if not self.read_only:
             LOG.debug('saving general context')
             self.config[ORIGINAL_VIDEO_PATH] = self.original_video_path
+            self.config[FINAL_VIDEO_PATH] = self.final_video_path
             self.config[RESUME_MODE] = self.resume_mode
             self.config[DETECT_SCENES] = self.detect_scenes
             self.config[SCENES_DIFFERENCE] = self.scenes_difference

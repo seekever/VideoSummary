@@ -37,6 +37,7 @@ class ContextTest(unittest.TestCase):
         LOG.info('starting general context test')
         with GeneralContext() as manager:
             manager.original_video_path = "test/path.mp4"
+            manager.final_video_path = "test/final"
             manager.resume_mode = ResumeMode.SUBTITLES
             manager.detect_scenes = True
             manager.scenes_difference = 0.3
@@ -44,12 +45,14 @@ class ContextTest(unittest.TestCase):
 
         with GeneralContext() as manager:
             self.assertEqual("test/path.mp4", manager.original_video_path)
+            self.assertEqual("test/final", manager.final_video_path)
             self.assertEqual(ResumeMode.SUBTITLES, manager.resume_mode)
             self.assertTrue(manager.detect_scenes)
             self.assertEqual(0.3, manager.scenes_difference)
             self.assertIsNone(manager.resume_times)
 
             manager.original_video_path = None
+            manager.final_video_path += "/video.mp4"
             manager.resume_mode = ResumeMode.OBJECTS
             manager.detect_scenes = False
             manager.scenes_difference -= 0.05
@@ -57,6 +60,7 @@ class ContextTest(unittest.TestCase):
 
         with GeneralContext() as manager:
             self.assertIsNone(manager.original_video_path)
+            self.assertEqual("test/final/video.mp4", manager.final_video_path)
             self.assertEqual(ResumeMode.OBJECTS, manager.resume_mode)
             self.assertFalse(manager.detect_scenes)
             self.assertEqual(0.25, manager.scenes_difference)
