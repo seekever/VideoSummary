@@ -23,7 +23,7 @@ class ContextTest(unittest.TestCase):
     def test_general_context(self):
         """Unit test that test that general context works."""
         LOG.info('starting general context test')
-        with GeneralContext() as manager:
+        with GeneralContext(test=True) as manager:
             manager.original_video_path = "test/path.mp4"
             manager.final_video_path = "test/final"
             manager.resume_mode = ResumeMode.SUBTITLES
@@ -31,7 +31,7 @@ class ContextTest(unittest.TestCase):
             manager.scenes_difference = 0.3
             manager.resume_times = None
 
-        with GeneralContext() as manager:
+        with GeneralContext(test=True) as manager:
             self.assertEqual("test/path.mp4", manager.original_video_path)
             self.assertEqual("test/final", manager.final_video_path)
             self.assertEqual(ResumeMode.SUBTITLES, manager.resume_mode)
@@ -46,7 +46,7 @@ class ContextTest(unittest.TestCase):
             manager.scenes_difference -= 0.05
             manager.resume_times = [[1, 4], [6, 14], [20, 25]]
 
-        with GeneralContext() as manager:
+        with GeneralContext(test=True) as manager:
             self.assertIsNone(manager.original_video_path)
             self.assertEqual("test/final/video.mp4", manager.final_video_path)
             self.assertEqual(ResumeMode.OBJECTS, manager.resume_mode)
@@ -58,16 +58,16 @@ class ContextTest(unittest.TestCase):
     def test_scenes_context(self):
         """Unit test that test that scenes context works."""
         LOG.info('starting scenes context test')
-        with ScenesContext() as manager:
+        with ScenesContext(test=True) as manager:
             manager.scenes_list = [[0, 10], [11, 25], [26, 45]]
 
-        with ScenesContext() as manager:
+        with ScenesContext(test=True) as manager:
             self.assertEqual([11, 25], manager.scenes_list[1])
 
             manager.scenes_list[1] = [13, 24]
             manager.scenes_list.append([46, 60])
 
-        with ScenesContext() as manager:
+        with ScenesContext(test=True) as manager:
             self.assertEqual([13, 24], manager.scenes_list[1])
             self.assertEqual([46, 60], manager.scenes_list[3])
         LOG.info('ending scenes context test')
@@ -75,7 +75,7 @@ class ContextTest(unittest.TestCase):
     def test_objects_context(self):
         """Unit test that test that objects context works."""
         LOG.info('starting objects context test')
-        with ObjectsContext() as manager:
+        with ObjectsContext(test=True) as manager:
             manager.objects_dict = {"dog": [10, 23, 45], "cat": [5, 41]}
             manager.objects_list = ['dog', 'cat', 'car']
             manager.optimization = False
@@ -85,7 +85,7 @@ class ContextTest(unittest.TestCase):
             manager.yolo_cfg_path = None
             manager.yolo_names_path = ""
 
-        with ObjectsContext() as manager:
+        with ObjectsContext(test=True) as manager:
             self.assertEqual([5, 41], manager.objects_dict["cat"])
             self.assertEqual('car', manager.objects_list[2])
             self.assertFalse(manager.optimization)
@@ -107,7 +107,7 @@ class ContextTest(unittest.TestCase):
             manager.yolo_cfg_path = "/test/cfg"
             manager.yolo_names_path += "/test/names"
 
-        with ObjectsContext() as manager:
+        with ObjectsContext(test=True) as manager:
             self.assertEqual([10, 45], manager.objects_dict["dog"])
             self.assertEqual([7, 33, 45], manager.objects_dict["tree"])
             self.assertEqual('tree', manager.objects_list[2])
@@ -123,7 +123,7 @@ class ContextTest(unittest.TestCase):
     def test_subtitles_context(self):
         """Unit test that test that subtitles context works."""
         LOG.info('starting subtitles context test')
-        with SubtitlesContext() as manager:
+        with SubtitlesContext(test=True) as manager:
             manager.subtitles_path = None
             manager.subtitles_list = [Subtitle("The first subtitle", 12, 34, None),
                                       Subtitle("The second subtitle", 24, 56, 10)]
@@ -136,7 +136,7 @@ class ContextTest(unittest.TestCase):
             manager.remove_accents = False
             manager.language = Languages.FINNISH
 
-        with SubtitlesContext() as manager:
+        with SubtitlesContext(test=True) as manager:
             self.assertEqual("The first subtitle", manager.subtitles_list[0].text)
             self.assertIsNone(manager.subtitles_list[0].score)
             self.assertEqual(24, manager.subtitles_list[1].start)
@@ -161,7 +161,7 @@ class ContextTest(unittest.TestCase):
             manager.remove_capital_letters = None
             manager.language = Languages.SPANISH
 
-        with SubtitlesContext() as manager:
+        with SubtitlesContext(test=True) as manager:
             self.assertEqual(SUBTITLES_PATH_TEST, manager.subtitles_path)
             self.assertEqual(manager.subtitles_list[0].score, 8)
             self.assertEqual("The thirst subtitle", manager.subtitles_list[1].text)
@@ -180,47 +180,47 @@ class ContextTest(unittest.TestCase):
         """Unit test that test that the read_only mode works."""
 
         # General context
-        with GeneralContext() as manager:
+        with GeneralContext(test=True) as manager:
             manager.detect_scenes = True
 
-        with GeneralContext(read_only=True) as manager:
+        with GeneralContext(read_only=True, test=True) as manager:
             self.assertTrue(manager.detect_scenes)
             manager.detect_scenes = False
 
-        with GeneralContext() as manager:
+        with GeneralContext(test=True) as manager:
             self.assertTrue(manager.detect_scenes)
 
         # Scenes context
-        with ScenesContext() as manager:
+        with ScenesContext(test=True) as manager:
             manager.scenes_list = [[0, 10], [11, 25], [26, 45]]
 
-        with ScenesContext(read_only=True) as manager:
+        with ScenesContext(read_only=True, test=True) as manager:
             self.assertEqual([[0, 10], [11, 25], [26, 45]], manager.scenes_list)
             manager.scenes_list = [[5, 14], [30, 36]]
 
-        with ScenesContext() as manager:
+        with ScenesContext(test=True) as manager:
             self.assertEqual([[0, 10], [11, 25], [26, 45]], manager.scenes_list)
 
         # Objects context
-        with ObjectsContext() as manager:
+        with ObjectsContext(test=True) as manager:
             manager.objects_dict = {"dog": [10, 23, 45], "cat": [5, 41]}
 
-        with ObjectsContext(read_only=True) as manager:
+        with ObjectsContext(read_only=True, test=True) as manager:
             self.assertEqual([5, 41], manager.objects_dict["cat"])
             manager.objects_dict["dog"].remove(23)
 
-        with ObjectsContext() as manager:
+        with ObjectsContext(test=True) as manager:
             self.assertEqual([10, 23, 45], manager.objects_dict["dog"])
 
         # Subtitles context
-        with SubtitlesContext() as manager:
+        with SubtitlesContext(test=True) as manager:
             manager.subtitles_path = SUBTITLES_PATH_TEST
 
-        with SubtitlesContext(read_only=True) as manager:
+        with SubtitlesContext(read_only=True, test=True) as manager:
             self.assertEqual(SUBTITLES_PATH_TEST, manager.subtitles_path)
             manager.subtitles_path = "subtitles/second/path.srt"
 
-        with SubtitlesContext() as manager:
+        with SubtitlesContext(test=True) as manager:
             self.assertEqual(SUBTITLES_PATH_TEST, manager.subtitles_path)
 
 

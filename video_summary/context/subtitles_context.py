@@ -7,8 +7,10 @@ from enum import Enum
 from video_summary.objects.subtitle import from_dict_list, to_dict_list
 
 # Paths
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) + 'conf/'
 CONFIG_PATH = os.path.join(ROOT_DIR, 'SubtitlesConfig.conf')
+CONFIG_PATH_DEFAULT = os.path.join(ROOT_DIR, 'SubtitlesConfigDefault.conf')
+CONFIG_PATH_TEST = os.path.join(ROOT_DIR, 'SubtitlesConfigTest.conf')
 
 # Strings for JSON
 SUBTITLES_PATH = "subtitlesPath"
@@ -76,6 +78,8 @@ class SubtitlesContext:
     ----------
     read_only : bool
         a boolean to activate the read only mode
+    test : bool
+        a boolean to activate the testing mode
     config : dict
         a dict with all the general settings
     subtitles_path : str
@@ -98,10 +102,12 @@ class SubtitlesContext:
         a boolean to activate the accents remove
     language : int
          the subtitles language (class Language)
+    path : string
+        the path for the configuration file
 
     """
 
-    def __init__(self, read_only=False):
+    def __init__(self, read_only=False, test=False):
         LOG.debug('starting subtitles context')
         self.read_only = read_only
         self.config = None
@@ -115,20 +121,30 @@ class SubtitlesContext:
         self.remove_capital_letters = None
         self.remove_accents = None
         self.language = None
+        if test:
+            self.path = CONFIG_PATH_TEST
+        else:
+            self.path = CONFIG_PATH
         LOG.debug('subtitles context started')
 
     def __enter__(self):
         try:
             LOG.debug('reading subtitles context')
-            with open(CONFIG_PATH, 'r') as json_file:
+            with open(self.path, 'r') as json_file:
                 json_string = json_file.read()
                 self.config = json.loads(json_string)
-                LOG.info('subtitles context read from %s', CONFIG_PATH)
+                LOG.info('subtitles context read from %s', self.path)
         except FileNotFoundError:
             LOG.debug('subtitles context not found')
-            LOG.debug('creating subtitles context')
-            self.config = {}
-            LOG.debug('subtitles context created')
+            LOG.debug('reading default subtitles context')
+            try:
+                with open(CONFIG_PATH_DEFAULT, 'r') as json_file:
+                    json_string = json_file.read()
+                    self.config = json.loads(json_string)
+            except FileNotFoundError:
+                LOG.error('default subtitles context not found')
+                raise FileNotFoundError('{} not found'.format(CONFIG_PATH_DEFAULT))
+            LOG.debug('default subtitles context read')
 
         LOG.debug('loading subtitles context')
         self.subtitles_path = self.config.get(SUBTITLES_PATH)
@@ -163,8 +179,8 @@ class SubtitlesContext:
             LOG.debug('writing subtitles context')
             json_string = json.dumps(self.config, indent=4)
 
-            with open(CONFIG_PATH, 'w') as json_file:
+            with open(self.path, 'w') as json_file:
                 json_file.write(json_string)
 
             json_file.close()
-            LOG.info('subtitles context written at %s', CONFIG_PATH)
+            LOG.info('subtitles context written at %s', self.path)

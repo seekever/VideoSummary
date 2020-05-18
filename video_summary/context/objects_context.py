@@ -5,8 +5,10 @@ import logging
 import os
 
 # Paths
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) + 'conf/'
 CONFIG_PATH = os.path.join(ROOT_DIR, 'ObjectsConfig.conf')
+CONFIG_PATH_DEFAULT = os.path.join(ROOT_DIR, 'ObjectsConfigDefault.conf')
+CONFIG_PATH_TEST = os.path.join(ROOT_DIR, 'ObjectsConfigTest.conf')
 
 # Strings for JSON
 OBJECTS_DICT = "objectsDict"
@@ -33,6 +35,8 @@ class ObjectsContext:
     ----------
     read_only : bool
         a boolean to activate the read only mode
+    test : bool
+        a boolean to activate the testing mode
     config : dict
         a dict with all the general settings
     objects_dict : dict
@@ -51,10 +55,12 @@ class ObjectsContext:
         the Yolo's cfg path
     yolo_names_path : str
         the Yolo's names path
+    path : string
+        the path for the configuration file
 
     """
 
-    def __init__(self, read_only=False):
+    def __init__(self, read_only=False, test=False):
         LOG.debug('starting objects context')
         self.read_only = read_only
         self.config = None
@@ -66,20 +72,30 @@ class ObjectsContext:
         self.yolo_weights_path = None
         self.yolo_cfg_path = None
         self.yolo_names_path = None
+        if test:
+            self.path = CONFIG_PATH_TEST
+        else:
+            self.path = CONFIG_PATH
         LOG.debug('objects context started')
 
     def __enter__(self):
         try:
             LOG.debug('reading objects context')
-            with open(CONFIG_PATH, 'r') as json_file:
+            with open(self.path, 'r') as json_file:
                 json_string = json_file.read()
                 self.config = json.loads(json_string)
-                LOG.info('objects context read from %s', CONFIG_PATH)
+                LOG.info('objects context read from %s', self.path)
         except FileNotFoundError:
             LOG.debug('objects context not found')
-            LOG.debug('creating objects context')
-            self.config = {}
-            LOG.debug('objects context created')
+            LOG.debug('reading default objects context')
+            try:
+                with open(CONFIG_PATH_DEFAULT, 'r') as json_file:
+                    json_string = json_file.read()
+                    self.config = json.loads(json_string)
+            except FileNotFoundError:
+                LOG.error('default objects context not found')
+                raise FileNotFoundError('{} not found'.format(CONFIG_PATH_DEFAULT))
+            LOG.debug('default objects objects read')
 
         LOG.debug('loading objects context')
         self.objects_dict = self.config.get(OBJECTS_DICT)
@@ -110,8 +126,8 @@ class ObjectsContext:
             LOG.debug('writing objects context')
             json_string = json.dumps(self.config, indent=4)
 
-            with open(CONFIG_PATH, 'w') as json_file:
+            with open(self.path, 'w') as json_file:
                 json_file.write(json_string)
 
             json_file.close()
-            LOG.info('objects context written at %s', CONFIG_PATH)
+            LOG.info('objects context written at %s', self.path)

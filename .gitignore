@@ -132,4 +132,5 @@ dmypy.json
 .idea/
 
 # Application
-video_summary/context/*.conf
+video_summary/context/conf/*.conf
+!video_summary/context/conf/*Default.conf

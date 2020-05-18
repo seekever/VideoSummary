@@ -7,8 +7,10 @@ import os
 from enum import Enum
 
 # Paths
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) + 'conf/'
 CONFIG_PATH = os.path.join(ROOT_DIR, 'GeneralConfig.conf')
+CONFIG_PATH_DEFAULT = os.path.join(ROOT_DIR, 'GeneralConfigDefault.conf')
+CONFIG_PATH_TEST = os.path.join(ROOT_DIR, 'GeneralConfigTest.conf')
 
 # Strings for JSON
 ORIGINAL_VIDEO_PATH = "originalVideoPath"
@@ -41,6 +43,8 @@ class GeneralContext:
     ----------
     read_only : bool
         a boolean to activate the read only mode
+    test : bool
+        a boolean to activate the testing mode
     config : dict
         a dict with all the general settings
     original_video_path : str
@@ -55,10 +59,12 @@ class GeneralContext:
         the difference percentage between scenes
     resume_times : list
         a list of pair of ints (start, end) in milliseconds
+    path : string
+        the path for the configuration file
 
     """
 
-    def __init__(self, read_only=False):
+    def __init__(self, read_only=False, test=False):
         LOG.debug('starting general context')
         self.read_only = read_only
         self.config = None
@@ -68,20 +74,30 @@ class GeneralContext:
         self.detect_scenes = None
         self.scenes_difference = None
         self.resume_times = None
+        if test:
+            self.path = CONFIG_PATH_TEST
+        else:
+            self.path = CONFIG_PATH
         LOG.debug('general context started')
 
     def __enter__(self):
         try:
             LOG.debug('reading general context')
-            with open(CONFIG_PATH, 'r') as json_file:
+            with open(self.path, 'r') as json_file:
                 json_string = json_file.read()
                 self.config = json.loads(json_string)
-                LOG.info('general context read from %s', CONFIG_PATH)
+                LOG.info('general context read from %s', self.path)
         except FileNotFoundError:
             LOG.debug('general context not found')
-            LOG.debug('creating general context')
-            self.config = {}
-            LOG.debug('general context created')
+            LOG.debug('reading default general context')
+            try:
+                with open(CONFIG_PATH_DEFAULT, 'r') as json_file:
+                    json_string = json_file.read()
+                    self.config = json.loads(json_string)
+            except FileNotFoundError:
+                LOG.error('default general context not found')
+                raise FileNotFoundError('{} not found'.format(CONFIG_PATH_DEFAULT))
+            LOG.debug('default general context read')
 
         LOG.debug('loading general context')
         self.original_video_path = self.config.get(ORIGINAL_VIDEO_PATH)
@@ -108,8 +124,8 @@ class GeneralContext:
             LOG.debug('writing general context')
             json_string = json.dumps(self.config, indent=4)
 
-            with open(CONFIG_PATH, 'w') as json_file:
+            with open(self.path, 'w') as json_file:
                 json_file.write(json_string)
 
             json_file.close()
-            LOG.info('general context written at %s', CONFIG_PATH)
+            LOG.info('general context written at %s', self.path)
