@@ -27,11 +27,6 @@ TRANSLATE = {
     ResumeMode.SUBTITLES_AND_OBJECTS: "Subtitles and objects"
 }
 
-# Default value
-DEFAULT_RESUME_MODE = ResumeMode.SUBTITLES
-DEFAULT_DETECT_SCENES = True
-DEFAULT_SCENES_DIFFERENCE = 0.3
-
 
 class GeneralOptions(QtWidgets.QMainWindow, ModelInterface):
     """ The class for the general options window. """
@@ -55,15 +50,9 @@ class GeneralOptions(QtWidgets.QMainWindow, ModelInterface):
     def load_context(self):
         LOG.debug('loading context')
         with GeneralContext(read_only=True) as manager:
-            self.resumeTypeBox.setCurrentIndex(manager.resume_mode or DEFAULT_RESUME_MODE)
-
-            if manager.detect_scenes is not None:
-                self.scenesDetectionBox.setChecked(manager.detect_scenes)
-            else:
-                self.scenesDetectionBox.setChecked(DEFAULT_DETECT_SCENES)
-
-            self.scenesDifSlider.setValue((manager.scenes_difference or
-                                           DEFAULT_SCENES_DIFFERENCE) * 100)
+            self.resumeTypeBox.setCurrentIndex(manager.resume_mode)
+            self.scenesDetectionBox.setChecked(manager.detect_scenes)
+            self.scenesDifSlider.setValue(manager.scenes_difference * 100)
         LOG.debug('context loaded')
 
     def save_context(self):

@@ -22,12 +22,6 @@ WINDOW_TITLE = "Objects options"
 LOGGER_NAME = 'App.Models.ObjectsOptions'
 LOG = logging.getLogger(LOGGER_NAME)
 
-# Default values
-DEFAULT_OPTIMIZATION = True
-DEFAULT_ANALYSIS = 2
-DEFAULT_PERIODICITY = 1000
-DEFAULT_OBJECT_LIST = []
-
 
 class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
     """
@@ -80,15 +74,12 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
     def load_context(self):
         LOG.debug('loading context')
         with ObjectsContext(read_only=True) as manager:
-            if manager.optimization is not None:
-                self.optimizationBox.setChecked(manager.optimization)
-            else:
-                self.optimizationBox.setChecked(DEFAULT_OPTIMIZATION)
+            self.optimizationBox.setChecked(manager.optimization)
 
-            self.analysisSlider.setValue(manager.scenes_periodicity or DEFAULT_ANALYSIS)
-            self.periodicitySlider.setValue(manager.milliseconds_periodicity or DEFAULT_PERIODICITY)
+            self.analysisSlider.setValue(manager.scenes_periodicity)
+            self.periodicitySlider.setValue(manager.milliseconds_periodicity)
             self.objectsView.clear()
-            self.objectsView.addItems(list(set(manager.objects_list or DEFAULT_OBJECT_LIST)))
+            self.objectsView.addItems(list(set(manager.objects_list)))
             self.yolo_weights_path = manager.yolo_weights_path
             self.yolo_cfg_path = manager.yolo_cfg_path
             self.yolo_names_path = manager.yolo_names_path
@@ -100,10 +91,6 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
             manager.optimization = self.optimizationBox.isChecked()
             manager.scenes_periodicity = self.analysisSlider.value()
             manager.milliseconds_periodicity = self.periodicitySlider.value()
-
-            if manager.objects_list is None:
-                manager.objects_list = DEFAULT_OBJECT_LIST
-
             manager.objects_list.clear()
             manager.objects_list = list({self.objectsView.item(i).text()
                                          for i in range(self.objectsView.count())})

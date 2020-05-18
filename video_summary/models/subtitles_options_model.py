@@ -60,18 +60,6 @@ TRANSLATE_LANGUAGE = {
     Languages.TURKISH: "Turkish"
 }
 
-# Default value
-DEFAULT_RESUME_PERCENTAGE = 0.3
-DEFAULT_VECTORING_TYPE = VectoringType.COUNTERS
-DEFAULT_REMOVE_PUNCTUATION = True
-DEFAULT_PUNCTUATION_SIGNS = ['<', '?', ':', ';', '[', '.', '¿', '`', '@', '%', ')', '_',
-                             '"', '+', '|', '¡', '^', '\\', '(', '/', '!', '>', ',', '}',
-                             '=', '*', "'", ']', '&', '{', '~', '#', '$', '-']
-DEFAULT_REMOVE_STOPWORDS = True
-DEFAULT_CAPITAL_LETTERS = True
-DEFAULT_REMOVE_ACCENTS = True
-DEFAULT_LANGUAGE = Languages.ENGLISH
-
 
 class SubtitlesOptions(QtWidgets.QMainWindow, ModelInterface):
     """
@@ -121,37 +109,14 @@ class SubtitlesOptions(QtWidgets.QMainWindow, ModelInterface):
         LOG.debug('loading context')
         with SubtitlesContext(read_only=True) as manager:
             self.path = manager.subtitles_path
-            self.resumePercentageSlider.setValue(manager.resume_percentage
-                                                 or DEFAULT_RESUME_PERCENTAGE)
-            self.vectoringTypeBox.setCurrentIndex(manager.vectoring_type
-                                                  or DEFAULT_VECTORING_TYPE)
-
-            if manager.remove_punctuation is not None:
-                self.removePunctuationBox.setChecked(manager.remove_punctuation)
-            else:
-                self.removePunctuationBox.setChecked(DEFAULT_REMOVE_PUNCTUATION)
-
-            if manager.punctuation_signs is not None:
-                self.punctuationCharactersEdit.setText(" ".join(manager.punctuation_signs))
-            else:
-                self.punctuationCharactersEdit.setText(" ".join(DEFAULT_PUNCTUATION_SIGNS))
-
-            if manager.remove_stop_words is not None:
-                self.removeStopWordsBox.setChecked(manager.remove_stop_words)
-            else:
-                self.removeStopWordsBox.setChecked(DEFAULT_REMOVE_STOPWORDS)
-
-            if manager.remove_capital_letters is not None:
-                self.removeCapitalLettersBox.setChecked(manager.remove_capital_letters)
-            else:
-                self.removeCapitalLettersBox.setChecked(DEFAULT_CAPITAL_LETTERS)
-
-            if manager.remove_accents is not None:
-                self.removeAccentsBox.setChecked(manager.remove_accents)
-            else:
-                self.removeAccentsBox.setChecked(DEFAULT_REMOVE_ACCENTS)
-
-            self.subtitlesLanguagesBox.setCurrentIndex(manager.language or DEFAULT_LANGUAGE)
+            self.resumePercentageSlider.setValue(manager.resume_percentage)
+            self.vectoringTypeBox.setCurrentIndex(manager.vectoring_type)
+            self.removePunctuationBox.setChecked(manager.remove_punctuation)
+            self.punctuationCharactersEdit.setText(" ".join(manager.punctuation_signs))
+            self.removeStopWordsBox.setChecked(manager.remove_stop_words)
+            self.removeCapitalLettersBox.setChecked(manager.remove_capital_letters)
+            self.removeAccentsBox.setChecked(manager.remove_accents)
+            self.subtitlesLanguagesBox.setCurrentIndex(manager.language)
         LOG.debug('context loaded')
 
     def save_context(self):
