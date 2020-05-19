@@ -12,6 +12,7 @@ from video_summary.models.model_interface import ModelInterface
 # Paths
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 TEMPLATE_PATH = os.path.join(ROOT_DIR, '../templates/', 'MainWindow.ui')
+CONFIG_PATH = os.path.join(ROOT_DIR, '../context/conf/')
 
 # Window
 WINDOW_TITLE = "Main window"
@@ -19,6 +20,10 @@ WINDOW_TITLE = "Main window"
 # Logger
 LOGGER_NAME = 'App.Models.MainWindow'
 LOG = logging.getLogger(LOGGER_NAME)
+
+# Files to remove in reset
+RESET_FILES = ["GeneralConfig.conf", "ObjectsConfig.conf",
+               "ScenesConfig.conf", "SubtitlesConfig.conf"]
 
 
 class MainWindow(QtWidgets.QMainWindow, ModelInterface):
@@ -36,6 +41,8 @@ class MainWindow(QtWidgets.QMainWindow, ModelInterface):
     -------
     load_video()
         asks to the user the original video path
+    reset_config()
+        asks to the user the original video path
     """
 
     path = None
@@ -50,6 +57,7 @@ class MainWindow(QtWidgets.QMainWindow, ModelInterface):
 
         self.loadVideoButton.clicked.connect(self.load_video)
         self.nextButton.clicked.connect(self.next_window)
+        self.resetButton.clicked.connect(self.reset_config)
         LOG.info('main window model initialized')
 
     def load_context(self):
@@ -94,3 +102,13 @@ class MainWindow(QtWidgets.QMainWindow, ModelInterface):
 
         self.reload_conditional_format()
         LOG.info('original video path: %s', self.path)
+
+    def reset_config(self):
+        """ Method that remove the user's configuration files to restart the configuration."""
+        for file in RESET_FILES:
+            try:
+                os.remove(CONFIG_PATH + file)
+                LOG.info('file %s removed', file)
+            except FileNotFoundError:
+                LOG.info('file %s nor found', file)
+        self.reload_conditional_format()
