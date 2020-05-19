@@ -23,5 +23,6 @@ LOG.addHandler(SH)
 
 if __name__ == '__main__':
     unittest.main()
+
     ContextTest()
     UtilsTest()

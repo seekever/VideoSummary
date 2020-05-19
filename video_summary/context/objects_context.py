@@ -5,7 +5,7 @@ import logging
 import os
 
 # Paths
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) + 'conf/'
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) + '/conf/'
 CONFIG_PATH = os.path.join(ROOT_DIR, 'ObjectsConfig.conf')
 CONFIG_PATH_DEFAULT = os.path.join(ROOT_DIR, 'ObjectsConfigDefault.conf')
 CONFIG_PATH_TEST = os.path.join(ROOT_DIR, 'ObjectsConfigTest.conf')

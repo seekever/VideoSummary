@@ -7,7 +7,7 @@ from enum import Enum
 from video_summary.objects.subtitle import from_dict_list, to_dict_list
 
 # Paths
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) + 'conf/'
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) + '/conf/'
 CONFIG_PATH = os.path.join(ROOT_DIR, 'SubtitlesConfig.conf')
 CONFIG_PATH_DEFAULT = os.path.join(ROOT_DIR, 'SubtitlesConfigDefault.conf')
 CONFIG_PATH_TEST = os.path.join(ROOT_DIR, 'SubtitlesConfigTest.conf')

@@ -7,7 +7,7 @@ import os
 from enum import Enum
 
 # Paths
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) + 'conf/'
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) + '/conf/'
 CONFIG_PATH = os.path.join(ROOT_DIR, 'GeneralConfig.conf')
 CONFIG_PATH_DEFAULT = os.path.join(ROOT_DIR, 'GeneralConfigDefault.conf')
 CONFIG_PATH_TEST = os.path.join(ROOT_DIR, 'GeneralConfigTest.conf')
