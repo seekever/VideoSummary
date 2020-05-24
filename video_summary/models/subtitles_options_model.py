@@ -6,6 +6,7 @@ import os
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtWidgets import QFileDialog
 
+from video_summary.context.general_context import GeneralContext, ResumeMode
 from video_summary.context.subtitles_context import SubtitlesContext, VectoringType, Languages
 from video_summary.controller.threads_controller import ThreadsController
 from video_summary.models.model_interface import ModelInterface
@@ -71,11 +72,19 @@ class SubtitlesOptions(QtWidgets.QMainWindow, ModelInterface):
     ----------
     path : str
         the subtitles path
+    detect_scenes : bool
+        a boolean to activate the detect scenes' progress bar
+    object_analysis : bool
+        a boolean to activate the object analysis' progress bar
 
     """
 
     # Subtitle path
     path = None
+
+    # Progress bars visibility
+    detect_scenes = True
+    object_analysis = True
 
     def __init__(self, *args, **kwargs):
         LOG.debug('initializing subtitle options window model')
@@ -90,6 +99,7 @@ class SubtitlesOptions(QtWidgets.QMainWindow, ModelInterface):
         self.nextButton.clicked.connect(self.next_window)
         self.removePunctuationBox.toggled.connect(self.reload_conditional_format)
         self.removeStopWordsBox.toggled.connect(self.reload_conditional_format)
+        self.resumePercentageSlider.valueChanged.connect(self.reload_conditional_format)
 
         for mode in VectoringType:
             self.vectoringTypeBox.addItem(TRANSLATE_VECTORING.get(mode), userData=mode)
@@ -118,6 +128,11 @@ class SubtitlesOptions(QtWidgets.QMainWindow, ModelInterface):
             self.removeCapitalLettersBox.setChecked(manager.remove_capital_letters)
             self.removeAccentsBox.setChecked(manager.remove_accents)
             self.subtitlesLanguagesBox.setCurrentIndex(manager.language)
+
+        with GeneralContext(read_only=True) as manager:
+            self.detect_scenes = manager.detect_scenes
+            self.object_analysis = manager.resume_mode in (ResumeMode.OBJECTS,
+                                                           ResumeMode.SUBTITLES_AND_OBJECTS)
         LOG.debug('context loaded')
 
     def save_context(self):
@@ -137,9 +152,14 @@ class SubtitlesOptions(QtWidgets.QMainWindow, ModelInterface):
 
     def reload_conditional_format(self):
         LOG.debug('reloading conditional format')
-        self.nextButton.setVisible(self.check_data())
+        self.subtitlesPathLabel.setText(self.path)
+        self.summaryPerccentageLabel.setText(str(self.resumePercentageSlider.value()))
+
         self.punctuationCharactersEdit.setVisible(self.removePunctuationBox.isChecked())
-        self.subtitlesLanguagesBox.setVisible(self.removeStopWordsBox.isChecked())
+        self.languageWidget.setVisible(self.removeStopWordsBox.isChecked())
+        self.scenesProgressWidget.setVisible(self.detect_scenes)
+        self.objectsProgressWidget.setVisible(self.object_analysis)
+        self.nextButton.setDisabled(not self.check_data())
         LOG.debug('conditional format reloaded')
 
     def check_data(self):
