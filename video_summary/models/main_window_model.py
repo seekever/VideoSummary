@@ -75,7 +75,8 @@ class MainWindow(QtWidgets.QMainWindow, ModelInterface):
 
     def reload_conditional_format(self):
         LOG.debug('reloading conditional format')
-        self.nextButton.setVisible(self.check_data())
+        self.nextButton.setDisabled(not self.check_data())
+        self.originalVideoPathLabel.setText(self.path)
         LOG.debug('conditional format reloaded')
 
     def check_data(self):
