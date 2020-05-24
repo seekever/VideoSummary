@@ -42,6 +42,7 @@ class GeneralOptions(QtWidgets.QMainWindow, ModelInterface):
         self.previousButton.clicked.connect(self.previous_window)
         self.nextButton.clicked.connect(self.next_window)
         self.scenesDetectionBox.toggled.connect(self.reload_conditional_format)
+        self.scenesDifSlider.valueChanged.connect(self.reload_conditional_format)
 
         for mode in ResumeMode:
             self.resumeTypeBox.addItem(TRANSLATE.get(mode), userData=mode)
@@ -65,8 +66,8 @@ class GeneralOptions(QtWidgets.QMainWindow, ModelInterface):
 
     def reload_conditional_format(self):
         LOG.debug('reloading conditional format')
-        self.scenesDifSlider.setVisible(self.scenesDetectionBox.isChecked())
-        self.label_2.setVisible(self.scenesDetectionBox.isChecked())
+        self.sceneDifferenceWidget.setVisible(self.scenesDetectionBox.isChecked())
+        self.sceneDifferenceLabel.setText(str(self.scenesDifSlider.value()))
         LOG.debug('conditional format reloaded')
 
     def next_window(self):
