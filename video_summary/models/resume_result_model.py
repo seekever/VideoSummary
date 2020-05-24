@@ -28,6 +28,11 @@ class ResumeResult(QtWidgets.QMainWindow, ModelInterface):
 
     ...
 
+    Attributes
+    ----------
+    path : str
+        the final video's path
+
     Methods
     -------
     download_video()
@@ -39,6 +44,9 @@ class ResumeResult(QtWidgets.QMainWindow, ModelInterface):
     update_video_save_progress_bar()
         update the progress bar of the video's saving
     """
+
+    # Final video path
+    path = None
 
     def __init__(self, *args, **kwargs):
         LOG.debug('initializing resume result window model')
@@ -65,10 +73,10 @@ class ResumeResult(QtWidgets.QMainWindow, ModelInterface):
     def download_video(self):
         """ Method that downloads the final video."""
         LOG.debug('downloadButton clicked')
-        path = QFileDialog.getSaveFileName(
+        self.path = QFileDialog.getSaveFileName(
             self, 'Save file', '', "Video files (*.mp4)").__getitem__(0)
         with GeneralContext() as manager:
-            manager.final_video_path = path
+            manager.final_video_path = self.path
 
         if ThreadsController.save_video_thread.isRunning():
             LOG.info('restarting save video thread')
@@ -76,6 +84,13 @@ class ResumeResult(QtWidgets.QMainWindow, ModelInterface):
         else:
             LOG.info('starting save video thread')
             ThreadsController.save_video_thread.start()
+        self.reload_conditional_format()
+
+    def reload_conditional_format(self):
+        LOG.debug('reloading conditional format')
+        self.progressWidget.setVisible(self.VideoCutBar.value() > 0)
+        self.downloadPathLabel.setText(self.path)
+        LOG.debug('conditional format reloaded')
 
     def update_video_cut_progress_bar(self, value):
         """
@@ -89,6 +104,7 @@ class ResumeResult(QtWidgets.QMainWindow, ModelInterface):
 
         LOG.debug('updating cut video progress bar')
         self.VideoCutBar.setValue(value)
+        self.reload_conditional_format()
         LOG.debug('cut video progress bar updated: %s / 100', value)
 
     def update_audio_save_progress_bar(self, value):
