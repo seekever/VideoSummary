@@ -29,6 +29,15 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
 
     ...
 
+    Attributes
+    ----------
+    yolo_weights_path : str
+        the Yolo's weights path
+    yolo_cfg_path : str
+        the Yolo's cfg path
+    yolo_names_path : str
+        the Yolo's names path
+
     Methods
     -------
     add_object()
@@ -43,6 +52,7 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
         ask the user to select the Yolo's names path
     """
 
+    # Yolo paths
     yolo_weights_path = None
     yolo_cfg_path = None
     yolo_names_path = None

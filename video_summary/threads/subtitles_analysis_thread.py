@@ -2,12 +2,13 @@
 
 import logging
 
+import numpy as np
 from PyQt5 import QtCore
 from PyQt5.QtCore import QThread
 from nltk.corpus import stopwords
 
 from video_summary.context.subtitles_context import SubtitlesContext, Languages
-from video_summary.threads.utils import *
+from video_summary.threads.utils import VECTORING_SWITCHER, load_subtitles, join_phrases, clean_phrases
 
 # Logger
 LOGGER_NAME = 'App.Threads.SubtitlesAnalysis'

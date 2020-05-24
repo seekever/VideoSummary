@@ -74,6 +74,7 @@ class SubtitlesOptions(QtWidgets.QMainWindow, ModelInterface):
 
     """
 
+    # Subtitle path
     path = None
 
     def __init__(self, *args, **kwargs):

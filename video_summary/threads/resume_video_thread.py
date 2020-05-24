@@ -101,7 +101,8 @@ class Resume(QThread):
                     LOG.debug('adding objects times')
                     with ObjectsContext(read_only=True) as manager:
                         for key in list(
-                                set(manager.objects_list).intersection(manager.objects_dict.keys())):
+                                set(manager.objects_list).intersection(
+                                    manager.objects_dict.keys())):
                             object_times = manager.objects_dict.get(key)
                             for object_time in object_times:
                                 result.append([object_time, object_time])
@@ -113,10 +114,10 @@ class Resume(QThread):
                 if detect_scenes:
                     LOG.debug('adjusting times to scenes')
                     with ScenesContext(read_only=True) as manager:
-                        for index, x in enumerate(result):
-                            scene_ini = [s for s in manager.scenes_list if x[0] <= s[1]][0]
+                        for index, time in enumerate(result):
+                            scene_ini = [s for s in manager.scenes_list if time[0] <= s[1]][0]
                             result[index][0] = scene_ini[0]
-                            scene_fin = [s for s in manager.scenes_list if x[1] <= s[1]][0]
+                            scene_fin = [s for s in manager.scenes_list if time[1] <= s[1]][0]
                             result[index][1] = scene_fin[1]
                     LOG.debug('times adjusted to scenes')
                 self.progress.emit(80)
@@ -124,7 +125,7 @@ class Resume(QThread):
             # Normalize and save resume times
             if self.active:
                 LOG.debug('normalizing times')
-                result = sorted(result, key=lambda x: x[0])
+                result = sorted(result, key=lambda times: times[0])
                 result = normalize_times(result)
                 with GeneralContext() as manager:
                     manager.resume_times = []
@@ -140,22 +141,19 @@ class Resume(QThread):
             if not self.restart:
                 break
 
+    def restart_thread(self):
+        """ Method that restart the resume\'s thread."""
+        self.deactivate_thread()
+        self.restart = True
+        self.progress.emit(0)
+        LOG.info('resume\'s thread restart activate')
 
-def restart_thread(self):
-    """ Method that restart the resume\'s thread."""
-    self.deactivate_thread()
-    self.restart = True
-    self.progress.emit(0)
-    LOG.info('resume\'s thread restart activate')
+    def activate_thread(self):
+        """ Method that activate the resume\'s thread."""
+        self.active = True
+        LOG.info('resume\'s thread activate')
 
-
-def activate_thread(self):
-    """ Method that activate the resume\'s thread."""
-    self.active = True
-    LOG.info('resume\'s thread activate')
-
-
-def deactivate_thread(self):
-    """ Method that deactivate the resume\'s thread."""
-    self.active = False
-    LOG.info('resume\'s thread deactivate')
+    def deactivate_thread(self):
+        """ Method that deactivate the resume\'s thread."""
+        self.active = False
+        LOG.info('resume\'s thread deactivate')

@@ -37,6 +37,7 @@ class ResumeOptions(QtWidgets.QMainWindow, ModelInterface):
 
     """
 
+    # Context config
     configurations = dict()
 
     def __init__(self, *args, **kwargs):

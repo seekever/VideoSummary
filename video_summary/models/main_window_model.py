@@ -45,6 +45,7 @@ class MainWindow(QtWidgets.QMainWindow, ModelInterface):
         asks to the user the original video path
     """
 
+    # Original video path
     path = None
 
     def __init__(self, *args, **kwargs):
@@ -111,4 +112,5 @@ class MainWindow(QtWidgets.QMainWindow, ModelInterface):
                 LOG.info('file %s removed', file)
             except FileNotFoundError:
                 LOG.info('file %s nor found', file)
+        self.load_context()
         self.reload_conditional_format()
