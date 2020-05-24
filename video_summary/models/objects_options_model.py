@@ -7,6 +7,7 @@ import re
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtWidgets import QFileDialog
 
+from video_summary.context.general_context import GeneralContext
 from video_summary.context.objects_context import ObjectsContext
 from video_summary.controller.threads_controller import ThreadsController
 from video_summary.models.model_interface import ModelInterface
@@ -37,6 +38,8 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
         the Yolo's cfg path
     yolo_names_path : str
         the Yolo's names path
+    detect_scenes : bool
+        a boolean to activate the detect scenes' progress bar
 
     Methods
     -------
@@ -57,6 +60,9 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
     yolo_cfg_path = None
     yolo_names_path = None
 
+    # Progress bars visibility
+    detect_scenes = None
+
     def __init__(self, *args, **kwargs):
         LOG.debug('initializing objects options window model')
         super().__init__(*args, *kwargs)
@@ -74,6 +80,8 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
         self.selectYoloWeightsButton.clicked.connect(self.select_yolo_weights)
         self.selectYoloCfgButton.clicked.connect(self.select_yolo_cfg)
         self.selectYoloNamesButton.clicked.connect(self.select_yolo_names)
+        self.analysisSlider.valueChanged.connect(self.reload_conditional_format)
+        self.periodicitySlider.valueChanged.connect(self.reload_conditional_format)
 
         ThreadsController.scenes_analysis_thread.progress.connect(
             self.update_scenes_analysis_progress_bar)
@@ -85,7 +93,6 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
         LOG.debug('loading context')
         with ObjectsContext(read_only=True) as manager:
             self.optimizationBox.setChecked(manager.optimization)
-
             self.analysisSlider.setValue(manager.scenes_periodicity)
             self.periodicitySlider.setValue(manager.milliseconds_periodicity)
             self.objectsView.clear()
@@ -93,6 +100,9 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
             self.yolo_weights_path = manager.yolo_weights_path
             self.yolo_cfg_path = manager.yolo_cfg_path
             self.yolo_names_path = manager.yolo_names_path
+
+        with GeneralContext(read_only=True) as manager:
+            self.detect_scenes = manager.detect_scenes
         LOG.debug('context loaded')
 
     def save_context(self):
@@ -111,17 +121,21 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
 
     def reload_conditional_format(self):
         LOG.debug('reloading conditional format')
-        self.analysisSlider.setVisible(self.optimizationBox.isChecked())
-        self.periodicitySlider.setVisible(not self.optimizationBox.isChecked())
-
         word_input = self.objectEdit.text().strip()
         correct_input = bool(re.fullmatch("[a-z]+", word_input))
         duplicate_input = word_input in [self.objectsView.item(i).text()
                                          for i in range(self.objectsView.count())]
-
-        self.addButton.setVisible(correct_input and not duplicate_input)
-        self.removeButton.setVisible(self.objectsView.count() > 0)
-        self.nextButton.setVisible(self.check_data())
+        self.addButton.setDisabled(not correct_input or duplicate_input)
+        self.removeButton.setDisabled(self.objectsView.count() <= 0)
+        self.analysisWidget.setVisible(self.optimizationBox.isChecked())
+        self.analysisLabel.setText(str(self.analysisSlider.value()))
+        self.periodicityWidget.setVisible(not self.optimizationBox.isChecked())
+        self.periodicityLabel.setText(str(self.periodicitySlider.value()))
+        self.yoloWeightsLabel.setText(str(os.path.basename(self.yolo_weights_path or "")))
+        self.yoloCfgLabel.setText(str(os.path.basename(self.yolo_cfg_path or "")))
+        self.yoloNamesLabel.setText(str(os.path.basename(self.yolo_names_path or "")))
+        self.scenesProgressWidget.setVisible(self.detect_scenes is True)
+        self.nextButton.setDisabled(not self.check_data())
         LOG.debug('conditional format reloaded')
 
     def check_data(self):
