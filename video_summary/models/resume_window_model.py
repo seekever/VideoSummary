@@ -76,13 +76,26 @@ class ResumeWindow(QtWidgets.QMainWindow, ModelInterface):
                                                            ResumeMode.SUBTITLES_AND_OBJECTS)
             self.subtitle_analysis = manager.resume_mode in (ResumeMode.SUBTITLES,
                                                              ResumeMode.SUBTITLES_AND_OBJECTS)
+        LOG.debug('contexts loaded')
+
+    def check_data(self):
+        LOG.debug('checking data')
+        with GeneralContext(read_only=True) as manager:
+            if manager.resume_times is None:
+                LOG.info('incorrect data (resume times is null)')
+                return False
+            if not manager.resume_times:
+                LOG.info('incorrect data (resume times is empty)')
+                return False
+        LOG.info('checked data: OK')
+        return True
 
     def reload_conditional_format(self):
         LOG.debug('reloading conditional format')
         self.scenesProgressWidget.setVisible(self.detect_scenes)
         self.objectsProgressWidget.setVisible(self.object_analysis)
         self.subtitlesProgressWidget.setVisible(self.subtitle_analysis)
-        self.nextButton.setDisabled(self.resumeBar.value() != 100)
+        self.nextButton.setDisabled(self.resumeBar.value() != 100 or not self.check_data())
         LOG.debug('conditional format reloaded')
 
     def update_resume_progress_bar(self, value):

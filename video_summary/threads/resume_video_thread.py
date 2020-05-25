@@ -105,7 +105,7 @@ class Resume(QThread):
                                     manager.objects_dict.keys())):
                             object_times = manager.objects_dict.get(key)
                             for object_time in object_times:
-                                result.append([object_time, object_time])
+                                result.append([object_time - 10, object_time + 10])
                     LOG.debug('objects times added')
                 self.progress.emit(60)
 
