@@ -96,6 +96,7 @@ class ResumeWindow(QtWidgets.QMainWindow, ModelInterface):
         self.objectsProgressWidget.setVisible(self.object_analysis)
         self.subtitlesProgressWidget.setVisible(self.subtitle_analysis)
         self.nextButton.setDisabled(self.resumeBar.value() != 100 or not self.check_data())
+        self.emptyResumLabel.setVisible(self.resumeBar.value() == 100 and not self.check_data())
         LOG.debug('conditional format reloaded')
 
     def update_resume_progress_bar(self, value):

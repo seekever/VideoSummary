@@ -189,7 +189,7 @@
      </layout>
     </item>
     <item>
-     <spacer name="verticalSpacer">
+     <spacer name="verticalSpacer_3">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
@@ -200,6 +200,13 @@
        </size>
       </property>
      </spacer>
+    </item>
+    <item alignment="Qt::AlignHCenter">
+     <widget class="QLabel" name="emptyResumLabel">
+      <property name="text">
+       <string>The resume result is empty</string>
+      </property>
+     </widget>
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
