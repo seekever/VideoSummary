@@ -8,6 +8,7 @@ from PyQt5 import uic, QtWidgets
 from video_summary.context.general_context import ResumeMode, GeneralContext
 from video_summary.controller.threads_controller import ThreadsController
 from video_summary.models.model_interface import ModelInterface
+from video_summary.utils import TRANSLATE_RESUME_MODE
 
 # Paths
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -19,13 +20,6 @@ WINDOW_TITLE = "General options"
 # Logger
 LOGGER_NAME = 'App.Models.GeneralOptions'
 LOG = logging.getLogger(LOGGER_NAME)
-
-# Translate
-TRANSLATE = {
-    ResumeMode.SUBTITLES: "Subtitles",
-    ResumeMode.OBJECTS: "Objects",
-    ResumeMode.SUBTITLES_AND_OBJECTS: "Subtitles and objects"
-}
 
 
 class GeneralOptions(QtWidgets.QMainWindow, ModelInterface):
@@ -45,7 +39,7 @@ class GeneralOptions(QtWidgets.QMainWindow, ModelInterface):
         self.scenesDifSlider.valueChanged.connect(self.reload_conditional_format)
 
         for mode in ResumeMode:
-            self.resumeTypeBox.addItem(TRANSLATE.get(mode), userData=mode)
+            self.resumeTypeBox.addItem(TRANSLATE_RESUME_MODE.get(mode), userData=mode)
         LOG.info('general options window model initialized')
 
     def load_context(self):

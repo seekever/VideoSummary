@@ -1,13 +1,13 @@
 """ The module for the resume options window."""
-import json
+
 import logging
 import os
 
 from PyQt5 import QtWidgets, uic
 
+from video_summary import utils
 from video_summary.context.general_context import GeneralContext, ResumeMode
 from video_summary.context.objects_context import ObjectsContext
-from video_summary.context.scenes_context import ScenesContext
 from video_summary.context.subtitles_context import SubtitlesContext
 from video_summary.controller.threads_controller import ThreadsController
 from video_summary.models.model_interface import ModelInterface
@@ -83,14 +83,12 @@ class ResumeOptions(QtWidgets.QMainWindow, ModelInterface):
                                                            ResumeMode.SUBTITLES_AND_OBJECTS)
             self.subtitle_analysis = manager.resume_mode in (ResumeMode.SUBTITLES,
                                                              ResumeMode.SUBTITLES_AND_OBJECTS)
-        with ScenesContext(read_only=True) as manager:
-            self.configurations["Subtitles"] = manager.config
         with ObjectsContext(read_only=True) as manager:
             self.configurations["Objects"] = manager.config
         with SubtitlesContext(read_only=True) as manager:
             self.configurations["Subtitles"] = manager.config
 
-        self.resumeOptionsLabel.setText(json.dumps(self.configurations, indent=4))
+        self.resumeOptionsLabel.setText(utils.print_config(self.configurations))
 
         LOG.debug('contexts loaded')
 

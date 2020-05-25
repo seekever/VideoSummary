@@ -8,7 +8,7 @@ from moviepy.video.compositing.concatenate import concatenate_videoclips
 from proglog import TqdmProgressBarLogger
 
 from video_summary.context.general_context import GeneralContext
-from video_summary.threads.utils import load_video
+from video_summary.utils import load_video
 
 # Logger
 LOGGER_NAME = 'App.Threads.SaveVideo'

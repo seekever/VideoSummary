@@ -9,7 +9,7 @@ from video_summary.context.general_context import GeneralContext, ResumeMode
 from video_summary.context.objects_context import ObjectsContext
 from video_summary.context.scenes_context import ScenesContext
 from video_summary.context.subtitles_context import SubtitlesContext
-from video_summary.threads.utils import normalize_times
+from video_summary.utils import normalize_times
 
 # Logger
 LOGGER_NAME = 'App.Threads.Resume'

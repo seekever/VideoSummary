@@ -5,7 +5,7 @@ import unittest
 from copy import copy
 
 from video_summary.objects.subtitle import Subtitle
-from video_summary.threads.utils import fuse_subtitles, join_phrases, clean_phrases, normalize_times
+from video_summary.utils import fuse_subtitles, join_phrases, clean_phrases, normalize_times
 
 # Logger
 LOGGER_NAME = 'Test.Utils'

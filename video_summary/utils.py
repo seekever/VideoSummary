@@ -9,8 +9,14 @@ import unidecode
 from moviepy.editor import VideoFileClip
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
-from video_summary.context.subtitles_context import VectoringType
+from video_summary.context.general_context import ResumeMode
+from video_summary.context.subtitles_context import VectoringType, Languages
 from video_summary.objects.subtitle import Subtitle
+
+# String constants
+TAB = "     -  "
+END_LINE = '\n'
+LINE = "--------------------------------------------"
 
 # Switcher
 VECTORING_SWITCHER = {
@@ -24,6 +30,51 @@ VECTORING_SWITCHER = {
     VectoringType.TF_IDF_WITH_SMOOTHING_IDF_AND_NORMALIZATION_L1:
         TfidfVectorizer(norm='l1', smooth_idf=True),
     VectoringType.TF_IDF_WITH_SMOOTHING_IDF_AND_NORMALIZATION_L2: TfidfVectorizer()
+}
+
+# Translate
+TRANSLATE_RESUME_MODE = {
+    ResumeMode.SUBTITLES: "Subtitles",
+    ResumeMode.OBJECTS: "Objects",
+    ResumeMode.SUBTITLES_AND_OBJECTS: "Subtitles and objects"
+}
+
+TRANSLATE_VECTORING = {
+    VectoringType.COUNTERS: "Counters",
+    VectoringType.BINARIES_COUNTERS: "Binaries counters",
+    VectoringType.N_GRAM_COUNTERS: "N-gram counters",
+    VectoringType.TF_WITH_NORMALIZATION_L1: "TF with normalization L1",
+    VectoringType.TF_WITH_NORMALIZATION_L2: "TF with normalization L2",
+    VectoringType.TF_IDF: "TF-IDF",
+    VectoringType.TF_IDF_WITH_SMOOTHING_IDF: "TF-IDF with smoothing IDF",
+    VectoringType.TF_IDF_WITH_SMOOTHING_IDF_AND_NORMALIZATION_L1:
+        "TF-IDF with smoothing IDF and normalization L1",
+    VectoringType.TF_IDF_WITH_SMOOTHING_IDF_AND_NORMALIZATION_L2:
+        "TF-IDF with smoothing IDF and normalization L2"
+}
+
+TRANSLATE_LANGUAGE = {
+    Languages.ARABIC: "Arabic",
+    Languages.AZERBAIJANI: "Azerbaijani",
+    Languages.DANISH: "Danish",
+    Languages.DUTCH: "Dutch",
+    Languages.ENGLISH: "English",
+    Languages.FINNISH: "Finnish",
+    Languages.FRENCH: "French",
+    Languages.GERMAN: "German",
+    Languages.GREEK: "Greek",
+    Languages.HUNGARIAN: "Hungarian",
+    Languages.INDONESIAN: "Indonesian",
+    Languages.ITALIAN: "Italian",
+    Languages.KAZAKH: "Kazakh",
+    Languages.NEPALI: "Nepali",
+    Languages.NORWEGIAN: "Norwegian",
+    Languages.PORTUGUESE: "Portuguese",
+    Languages.ROMANIAN: "Romanian",
+    Languages.RUSSIAN: "Russian",
+    Languages.SPANISH: "Spanish",
+    Languages.SWEDISH: "Swedish",
+    Languages.TURKISH: "Turkish"
 }
 
 
@@ -388,5 +439,75 @@ def normalize_times(times):
                 last = max(last, time[1])
                 result[-1][1] = last
             last = result[-1][1]
+
+    return result
+
+
+def print_config(config):
+    """
+    Method to print the configurations.
+
+    ...
+
+    Parameters
+    ----------
+    config : dict
+        the dict with the configurations
+
+    Returns
+    -------
+    str
+        the formatted string to print
+
+    """
+
+    result = ""
+    result += "General:" + END_LINE
+    result += TAB + "Original video path: " + config["General"]["originalVideoPath"] + END_LINE
+    result += TAB + "Resume mode: " + TRANSLATE_RESUME_MODE.get(
+        config["General"]["resumeMode"]) + END_LINE
+    result += TAB + "Detect scenes: " + str(config["General"]["detectScenes"]) + END_LINE
+    if config["General"]["detectScenes"]:
+        result += TAB + "Scenes difference: " + str(int(
+            config["General"]["scenesDifference"] * 100)) + "%" + END_LINE
+
+    if config["General"]["resumeMode"] in (ResumeMode.OBJECTS, ResumeMode.SUBTITLES_AND_OBJECTS):
+        result += LINE + END_LINE
+        result += "Objects:" + END_LINE
+        result += TAB + "Objects to detect: " + ', '.join(
+            config["Objects"]["objectsList"]) + END_LINE
+        result += TAB + "Optimization by scenes: " + str(
+            config["Objects"]["optimization"]) + END_LINE
+        if config["Objects"]["optimization"]:
+            result += TAB + "Analysis periodicity: " + str(
+                config["Objects"]["scenesPeriodicity"]) + " / scene" + END_LINE
+        else:
+            result += TAB + "Analysis periodicity: each " + str(
+                config["Objects"]["millisecondsPeriodicity"]) + " milliseconds" + END_LINE
+        result += TAB + "Yolo weights path: " + config["Objects"]["yoloWeightsPath"] + END_LINE
+        result += TAB + "Yolo cfg path: " + config["Objects"]["yoloCfgPath"] + END_LINE
+        result += TAB + "Yolo names path: " + config["Objects"]["yoloNamesPath"] + END_LINE
+
+    if config["General"]["resumeMode"] in (ResumeMode.SUBTITLES, ResumeMode.SUBTITLES_AND_OBJECTS):
+        result += LINE + END_LINE
+        result += "Subtitles:" + END_LINE
+        result += TAB + "Subtitles path: " + config["Subtitles"]["subtitlesPath"] + END_LINE
+        result += TAB + "Resume percentage: " + str(
+            config["Subtitles"]["resumePercentage"]) + "%" + END_LINE
+        result += TAB + "Vectoring type: " + TRANSLATE_VECTORING.get(
+            config["Subtitles"]["vectoringType"]) + END_LINE
+        result += TAB + "Remove punctuation: " + str(
+            config["Subtitles"]["removePunctuation"]) + END_LINE
+        if config["Subtitles"]["removePunctuation"]:
+            result += TAB + "Punctuation signs: " + ' '.join(
+                config["Subtitles"]["punctuationSigns"]) + END_LINE
+        result += TAB + "Remove stop words: " + str(
+            config["Subtitles"]["removeStopWords"]) + END_LINE
+        if config["Subtitles"]["removeStopWords"]:
+            result += TAB + "Stop words language: " + TRANSLATE_LANGUAGE.get(
+                config["Subtitles"]["language"]) + END_LINE
+        result += TAB + "Remove capital letters: " + str(
+            config["Subtitles"]["removeCapitalLetters"]) + END_LINE
+        result += TAB + "Remove accents: " + str(config["Subtitles"]["removeAccents"]) + END_LINE
 
     return result

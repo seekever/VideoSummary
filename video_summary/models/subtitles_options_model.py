@@ -10,6 +10,7 @@ from video_summary.context.general_context import GeneralContext, ResumeMode
 from video_summary.context.subtitles_context import SubtitlesContext, VectoringType, Languages
 from video_summary.controller.threads_controller import ThreadsController
 from video_summary.models.model_interface import ModelInterface
+from video_summary.utils import TRANSLATE_VECTORING, TRANSLATE_LANGUAGE
 
 # Paths
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -21,45 +22,6 @@ WINDOW_TITLE = "Subtitles options"
 # Logger
 LOGGER_NAME = 'App.Models.SubtitlesOptions'
 LOG = logging.getLogger(LOGGER_NAME)
-
-# Translate
-TRANSLATE_VECTORING = {
-    VectoringType.COUNTERS: "Counters",
-    VectoringType.BINARIES_COUNTERS: "Binaries counters",
-    VectoringType.N_GRAM_COUNTERS: "N-gram counters",
-    VectoringType.TF_WITH_NORMALIZATION_L1: "TF with normalization L1",
-    VectoringType.TF_WITH_NORMALIZATION_L2: "TF with normalization L2",
-    VectoringType.TF_IDF: "TF-IDF",
-    VectoringType.TF_IDF_WITH_SMOOTHING_IDF: "TF-IDF with smoothing IDF",
-    VectoringType.TF_IDF_WITH_SMOOTHING_IDF_AND_NORMALIZATION_L1:
-        "TF-IDF with smoothing IDF and normalization L1",
-    VectoringType.TF_IDF_WITH_SMOOTHING_IDF_AND_NORMALIZATION_L2:
-        "TF-IDF with smoothing IDF and normalization L2"
-}
-
-TRANSLATE_LANGUAGE = {
-    Languages.ARABIC: "Arabic",
-    Languages.AZERBAIJANI: "Azerbaijani",
-    Languages.DANISH: "Danish",
-    Languages.DUTCH: "Dutch",
-    Languages.ENGLISH: "English",
-    Languages.FINNISH: "Finnish",
-    Languages.FRENCH: "French",
-    Languages.GERMAN: "German",
-    Languages.GREEK: "Greek",
-    Languages.HUNGARIAN: "Hungarian",
-    Languages.INDONESIAN: "Indonesian",
-    Languages.ITALIAN: "Italian",
-    Languages.KAZAKH: "Kazakh",
-    Languages.NEPALI: "Nepali",
-    Languages.NORWEGIAN: "Norwegian",
-    Languages.PORTUGUESE: "Portuguese",
-    Languages.ROMANIAN: "Romanian",
-    Languages.RUSSIAN: "Russian",
-    Languages.SPANISH: "Spanish",
-    Languages.SWEDISH: "Swedish",
-    Languages.TURKISH: "Turkish"
-}
 
 
 class SubtitlesOptions(QtWidgets.QMainWindow, ModelInterface):

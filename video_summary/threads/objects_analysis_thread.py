@@ -10,7 +10,7 @@ from PyQt5.QtCore import QThread
 from video_summary.context.general_context import GeneralContext
 from video_summary.context.objects_context import ObjectsContext
 from video_summary.context.scenes_context import ScenesContext
-from video_summary.threads.utils import load_video, load_yolo, detect_objects
+from video_summary.utils import load_video, load_yolo, detect_objects
 
 # Paths
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
