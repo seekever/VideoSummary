@@ -7,7 +7,7 @@ import os
 from PyQt5 import QtWidgets, uic
 
 from video_summary.context.general_context import GeneralContext, ResumeMode
-from video_summary.controller.threads_controller import ThreadsController
+from video_summary.controller.processes_controller import ProcessesController
 from video_summary.models.model_interface import ModelInterface
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -53,13 +53,13 @@ class ResumeWindow(QtWidgets.QMainWindow, ModelInterface):
         self.previousButton.clicked.connect(self.previous_window)
         self.nextButton.clicked.connect(self.next_window)
 
-        ThreadsController.scenes_analysis_thread.progress.connect(
+        ProcessesController.scenes_analysis_process.progress.connect(
             self.update_scenes_analysis_progress_bar)
-        ThreadsController.objects_analysis_thread.progress.connect(
+        ProcessesController.objects_analysis_process.progress.connect(
             self.update_objects_analysis_progress_bar)
-        ThreadsController.subtitles_analysis_thread.progress.connect(
+        ProcessesController.subtitles_analysis_process.progress.connect(
             self.update_subtitles_analysis_progress_bar)
-        ThreadsController.resume_thread.progress.connect(
+        ProcessesController.resume_process.progress.connect(
             self.update_resume_progress_bar)
 
         self.update_scenes_analysis_progress_bar(0)

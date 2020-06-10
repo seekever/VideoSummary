@@ -7,7 +7,7 @@ from PyQt5 import QtWidgets, uic
 from PyQt5.QtWidgets import QFileDialog
 
 from video_summary.context.general_context import GeneralContext
-from video_summary.controller.threads_controller import ThreadsController
+from video_summary.controller.processes_controller import ProcessesController
 from video_summary.models.model_interface import ModelInterface
 
 # Paths
@@ -58,11 +58,11 @@ class ResumeResult(QtWidgets.QMainWindow, ModelInterface):
 
         self.downloadButton.clicked.connect(self.download_video)
 
-        ThreadsController.save_video_thread.progress_cut.connect(
+        ProcessesController.save_video_process.progress_cut.connect(
             self.update_video_cut_progress_bar)
-        ThreadsController.save_video_thread.progress_audio.connect(
+        ProcessesController.save_video_process.progress_audio.connect(
             self.update_audio_save_progress_bar)
-        ThreadsController.save_video_thread.progress_video.connect(
+        ProcessesController.save_video_process.progress_video.connect(
             self.update_video_save_progress_bar)
 
         self.update_video_cut_progress_bar(0)
@@ -78,12 +78,12 @@ class ResumeResult(QtWidgets.QMainWindow, ModelInterface):
         with GeneralContext() as manager:
             manager.final_video_path = self.path
 
-        if ThreadsController.save_video_thread.isRunning():
-            LOG.info('restarting save video thread')
-            ThreadsController.save_video_thread.restart_thread()
+        if ProcessesController.save_video_process.isRunning():
+            LOG.info('restarting save video process')
+            ProcessesController.save_video_process.restart_process()
         else:
-            LOG.info('starting save video thread')
-            ThreadsController.save_video_thread.start()
+            LOG.info('starting save video process')
+            ProcessesController.save_video_process.start()
         self.reload_conditional_format()
 
     def reload_conditional_format(self):

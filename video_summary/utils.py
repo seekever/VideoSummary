@@ -1,4 +1,4 @@
-"""Module with the utils for the threads"""
+"""Module with the utils for the processes"""
 
 from copy import copy
 

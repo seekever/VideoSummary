@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QFileDialog
 
 from video_summary.context.general_context import GeneralContext
 from video_summary.context.objects_context import ObjectsContext
-from video_summary.controller.threads_controller import ThreadsController
+from video_summary.controller.processes_controller import ProcessesController
 from video_summary.models.model_interface import ModelInterface
 
 # Paths
@@ -83,7 +83,7 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
         self.analysisSlider.valueChanged.connect(self.reload_conditional_format)
         self.periodicitySlider.valueChanged.connect(self.reload_conditional_format)
 
-        ThreadsController.scenes_analysis_thread.progress.connect(
+        ProcessesController.scenes_analysis_process.progress.connect(
             self.update_scenes_analysis_progress_bar)
 
         self.update_scenes_analysis_progress_bar(0)
@@ -217,9 +217,9 @@ class ObjectsOptions(QtWidgets.QMainWindow, ModelInterface):
 
     def next_window(self):
         super().next_window()
-        if ThreadsController.objects_analysis_thread.isRunning():
-            LOG.info('restarting objects analysis thread')
-            ThreadsController.objects_analysis_thread.restart_thread()
+        if ProcessesController.objects_analysis_process.isRunning():
+            LOG.info('restarting objects analysis process')
+            ProcessesController.objects_analysis_process.restart_process()
         else:
-            LOG.info('starting objects analysis thread')
-            ThreadsController.objects_analysis_thread.start()
+            LOG.info('starting objects analysis process')
+            ProcessesController.objects_analysis_process.start()

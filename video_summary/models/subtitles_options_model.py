@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QFileDialog
 
 from video_summary.context.general_context import GeneralContext, ResumeMode
 from video_summary.context.subtitles_context import SubtitlesContext, VectoringType, Languages
-from video_summary.controller.threads_controller import ThreadsController
+from video_summary.controller.processes_controller import ProcessesController
 from video_summary.models.model_interface import ModelInterface
 from video_summary.utils import TRANSLATE_VECTORING, TRANSLATE_LANGUAGE
 
@@ -69,9 +69,9 @@ class SubtitlesOptions(QtWidgets.QMainWindow, ModelInterface):
         for mode in Languages:
             self.subtitlesLanguagesBox.addItem(TRANSLATE_LANGUAGE.get(mode), userData=mode)
 
-        ThreadsController.scenes_analysis_thread.progress.connect(
+        ProcessesController.scenes_analysis_process.progress.connect(
             self.update_scenes_analysis_progress_bar)
-        ThreadsController.objects_analysis_thread.progress.connect(
+        ProcessesController.objects_analysis_process.progress.connect(
             self.update_objects_analysis_progress_bar)
 
         self.update_scenes_analysis_progress_bar(0)
@@ -152,9 +152,9 @@ class SubtitlesOptions(QtWidgets.QMainWindow, ModelInterface):
 
     def next_window(self):
         super().next_window()
-        if ThreadsController.subtitles_analysis_thread.isRunning():
-            LOG.info('restarting subtitles analysis thread')
-            ThreadsController.subtitles_analysis_thread.restart_thread()
+        if ProcessesController.subtitles_analysis_process.isRunning():
+            LOG.info('restarting subtitles analysis process')
+            ProcessesController.subtitles_analysis_process.restart_process()
         else:
-            LOG.info('starting subtitles analysis thread')
-            ThreadsController.subtitles_analysis_thread.start()
+            LOG.info('starting subtitles analysis process')
+            ProcessesController.subtitles_analysis_process.start()

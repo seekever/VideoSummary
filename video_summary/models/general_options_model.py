@@ -6,7 +6,7 @@ import os
 from PyQt5 import uic, QtWidgets
 
 from video_summary.context.general_context import ResumeMode, GeneralContext
-from video_summary.controller.threads_controller import ThreadsController
+from video_summary.controller.processes_controller import ProcessesController
 from video_summary.models.model_interface import ModelInterface
 from video_summary.utils import TRANSLATE_RESUME_MODE
 
@@ -68,9 +68,9 @@ class GeneralOptions(QtWidgets.QMainWindow, ModelInterface):
         super().next_window()
         with GeneralContext(read_only=True) as manager:
             if manager.detect_scenes:
-                if ThreadsController.scenes_analysis_thread.isRunning():
-                    LOG.info('restarting scenes analysis thread')
-                    ThreadsController.scenes_analysis_thread.restart_thread()
+                if ProcessesController.scenes_analysis_process.isRunning():
+                    LOG.info('restarting scenes analysis process')
+                    ProcessesController.scenes_analysis_process.restart_process()
                 else:
-                    LOG.info('starting scenes analysis thread')
-                    ThreadsController.scenes_analysis_thread.start()
+                    LOG.info('starting scenes analysis process')
+                    ProcessesController.scenes_analysis_process.start()

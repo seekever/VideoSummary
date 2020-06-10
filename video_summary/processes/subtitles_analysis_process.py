@@ -1,4 +1,4 @@
-""" The module for the subtitles analysis thread."""
+""" The module for the subtitles analysis process."""
 
 import logging
 
@@ -11,7 +11,7 @@ from video_summary.context.subtitles_context import SubtitlesContext, Languages
 from video_summary.utils import VECTORING_SWITCHER, load_subtitles, join_phrases, clean_phrases
 
 # Logger
-LOGGER_NAME = 'App.Threads.SubtitlesAnalysis'
+LOGGER_NAME = 'App.Processes.SubtitlesAnalysis'
 LOG = logging.getLogger(LOGGER_NAME)
 
 # Switcher
@@ -42,7 +42,7 @@ SWITCHER_LANGUAGE = {
 
 class SubtitlesAnalysis(QThread):
     """
-    The subtitles analysis thread.
+    The subtitles analysis process.
 
     ...
 
@@ -53,12 +53,12 @@ class SubtitlesAnalysis(QThread):
 
     Methods
     -------
-    restart_thread()
-        restart the subtitles analysis thread
-    activate_thread()
-        activate the subtitles analysis thread
-    deactivate_thread()
-        deactivate the subtitles analysis thread
+    restart_process()
+        restart the subtitles analysis process
+    activate_process()
+        activate the subtitles analysis process
+    deactivate_process()
+        deactivate the subtitles analysis process
 
     """
 
@@ -66,11 +66,11 @@ class SubtitlesAnalysis(QThread):
     progress = QtCore.pyqtSignal(int)
 
     def __init__(self):
-        LOG.debug('initializing subtitles analysis thread')
+        LOG.debug('initializing subtitles analysis process')
         QThread.__init__(self)
         self.active = True
         self.restart = False
-        LOG.info('subtitles analysis thread initialized')
+        LOG.info('subtitles analysis process initialized')
 
     def run(self):
         """
@@ -154,19 +154,19 @@ class SubtitlesAnalysis(QThread):
             if not self.restart:
                 break
 
-    def restart_thread(self):
-        """ Method that restart the subtitles analysis thread."""
+    def restart_process(self):
+        """ Method that restart the subtitles analysis process."""
         self.active = False
         self.restart = True
         self.progress.emit(0)
-        LOG.info('subtitles analysis thread restart activate')
+        LOG.info('subtitles analysis process restart activate')
 
-    def activate_thread(self):
-        """ Method that activate the subtitles analysis thread."""
+    def activate_process(self):
+        """ Method that activate the subtitles analysis process."""
         self.active = True
-        LOG.info('subtitles analysis thread activate')
+        LOG.info('subtitles analysis process activate')
 
-    def deactivate_thread(self):
-        """ Method that deactivate the subtitles analysis thread."""
+    def deactivate_process(self):
+        """ Method that deactivate the subtitles analysis process."""
         self.active = False
-        LOG.info('subtitles analysis thread deactivate')
+        LOG.info('subtitles analysis process deactivate')

@@ -3,7 +3,7 @@
 import logging
 import sys
 
-from video_summary.controller.threads_controller import ThreadsController
+from video_summary.controller.processes_controller import ProcessesController
 from video_summary.controller.windows_controller import WindowsController
 
 # Logger
@@ -24,4 +24,4 @@ LOG.addHandler(SH)
 
 if __name__ == '__main__':
     WindowsController()
-    ThreadsController()
+    ProcessesController()

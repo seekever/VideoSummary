@@ -1,4 +1,4 @@
-""" The module for the save video thread."""
+""" The module for the save video process."""
 
 import logging
 
@@ -11,7 +11,7 @@ from video_summary.context.general_context import GeneralContext
 from video_summary.utils import load_video
 
 # Logger
-LOGGER_NAME = 'App.Threads.SaveVideo'
+LOGGER_NAME = 'App.Processes.SaveVideo'
 LOG = logging.getLogger(LOGGER_NAME)
 
 
@@ -63,7 +63,7 @@ class SaveVideoLogger(QObject, TqdmProgressBarLogger):
 
 class SaveVideo(QThread):
     """
-    The save video thread.
+    The save video process.
 
     ...
 
@@ -77,23 +77,23 @@ class SaveVideo(QThread):
         the signal to change the save video progress bar
     logger : SaveVideoLogger
         the SaveVideoLogger to get the save audio and video progress bar
-    scenes_thread : thread
-        the thread of the scene analysis process
-    objects_thread : thread
-        the thread of the objects analysis process
-    subtitles_thread : thread
-        the thread of the subtitle analysis process
-    resume_thread : thread
-        the thread of the resume process
+    scenes_process : process
+        the process of the scene analysis
+    objects_process : process
+        the process of the objects analysis
+    subtitles_process : process
+        the process of the subtitle analysis
+    resume_process : process
+        the process of the resume
 
     Methods
     -------
-    restart_thread()
-        restart the save video thread
-    activate_thread()
-        activate the save video thread
-    deactivate_thread()
-        deactivate the save video thread
+    restart_process()
+        restart the save video process
+    activate_process()
+        activate the save video process
+    deactivate_process()
+        deactivate the save video process
 
     """
 
@@ -105,26 +105,26 @@ class SaveVideo(QThread):
     # Logger
     logger = SaveVideoLogger()
 
-    # Threads to wait
-    scenes_thread = None
-    objects_thread = None
-    subtitles_thread = None
-    resume_thread = None
+    # Processes to wait
+    scenes_process = None
+    objects_process = None
+    subtitles_process = None
+    resume_process = None
 
-    def __init__(self, scenes_thread, objects_thread, subtitles_thread, resume_thread):
-        LOG.debug('initializing save video thread')
+    def __init__(self, scenes_process, objects_process, subtitles_process, resume_process):
+        LOG.debug('initializing save video process')
         QThread.__init__(self)
         self.active = True
         self.restart = False
-        self.scenes_thread = scenes_thread
-        self.objects_thread = objects_thread
-        self.subtitles_thread = subtitles_thread
-        self.resume_thread = resume_thread
+        self.scenes_process = scenes_process
+        self.objects_process = objects_process
+        self.subtitles_process = subtitles_process
+        self.resume_process = resume_process
 
         self.logger.logger_audio.connect(self.progress_audio)
         self.logger.logger_video.connect(self.progress_video)
 
-        LOG.info('save video thread initialized')
+        LOG.info('save video process initialized')
 
     def run(self):
         """
@@ -135,13 +135,13 @@ class SaveVideo(QThread):
             self.active = True
             self.restart = False
 
-            # Wait to the previous threads' finish
+            # Wait to the previous processes' finish
             if self.active:
-                LOG.debug('waiting previous process')
-                self.scenes_thread.wait()
-                self.objects_thread.wait()
-                self.subtitles_thread.wait()
-                self.resume_thread.wait()
+                LOG.debug('waiting previous processes')
+                self.scenes_process.wait()
+                self.objects_process.wait()
+                self.subtitles_process.wait()
+                self.resume_process.wait()
 
             # Load the original video to "clip"
             if self.active:
@@ -176,21 +176,21 @@ class SaveVideo(QThread):
             if not self.restart:
                 break
 
-    def restart_thread(self):
-        """ Method that restart the save video thread."""
-        self.deactivate_thread()
+    def restart_process(self):
+        """ Method that restart the save video process."""
+        self.deactivate_process()
         self.restart = True
         self.progress_cut.emit(0)
         self.progress_audio.emit(0)
         self.progress_video.emit(0)
-        LOG.info('save video thread restart activate')
+        LOG.info('save video process restart activate')
 
-    def activate_thread(self):
-        """ Method that activate the save video thread."""
+    def activate_process(self):
+        """ Method that activate the save video process."""
         self.active = True
-        LOG.info('save video thread activate')
+        LOG.info('save video process activate')
 
-    def deactivate_thread(self):
-        """ Method that deactivate the save video thread."""
+    def deactivate_process(self):
+        """ Method that deactivate the save video process."""
         self.active = False
-        LOG.info('save video thread deactivate')
+        LOG.info('save video process deactivate')

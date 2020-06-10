@@ -9,7 +9,7 @@ from video_summary import utils
 from video_summary.context.general_context import GeneralContext, ResumeMode
 from video_summary.context.objects_context import ObjectsContext
 from video_summary.context.subtitles_context import SubtitlesContext
-from video_summary.controller.threads_controller import ThreadsController
+from video_summary.controller.processes_controller import ProcessesController
 from video_summary.models.model_interface import ModelInterface
 
 # Paths
@@ -62,11 +62,11 @@ class ResumeOptions(QtWidgets.QMainWindow, ModelInterface):
         self.previousButton.clicked.connect(self.previous_window)
         self.nextButton.clicked.connect(self.next_window)
 
-        ThreadsController.scenes_analysis_thread.progress.connect(
+        ProcessesController.scenes_analysis_process.progress.connect(
             self.update_scenes_analysis_progress_bar)
-        ThreadsController.objects_analysis_thread.progress.connect(
+        ProcessesController.objects_analysis_process.progress.connect(
             self.update_objects_analysis_progress_bar)
-        ThreadsController.subtitles_analysis_thread.progress.connect(
+        ProcessesController.subtitles_analysis_process.progress.connect(
             self.update_subtitles_analysis_progress_bar)
 
         self.update_scenes_analysis_progress_bar(0)
@@ -101,9 +101,9 @@ class ResumeOptions(QtWidgets.QMainWindow, ModelInterface):
 
     def next_window(self):
         super().next_window()
-        if ThreadsController.resume_thread.isRunning():
-            LOG.info('restarting resume thread')
-            ThreadsController.resume_thread.restart_thread()
+        if ProcessesController.resume_process.isRunning():
+            LOG.info('restarting resume process')
+            ProcessesController.resume_process.restart_process()
         else:
-            LOG.info('starting resume thread')
-            ThreadsController.resume_thread.start()
+            LOG.info('starting resume process')
+            ProcessesController.resume_process.start()

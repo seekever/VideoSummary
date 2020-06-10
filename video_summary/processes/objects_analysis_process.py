@@ -1,4 +1,4 @@
-"""The module for the objects analysis thread."""
+"""The module for the objects analysis process."""
 
 import logging
 import os
@@ -16,13 +16,13 @@ from video_summary.utils import load_video, load_yolo, detect_objects
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Logger
-LOGGER_NAME = 'App.Threads.ObjectsAnalysis'
+LOGGER_NAME = 'App.Processes.ObjectsAnalysis'
 LOG = logging.getLogger(LOGGER_NAME)
 
 
 class ObjectsAnalysis(QThread):
     """
-    The objects analysis thread.
+    The objects analysis process.
 
     ...
 
@@ -30,33 +30,33 @@ class ObjectsAnalysis(QThread):
     ----------
     progress : signal
         the signal to change the progress bar
-    scenes_thread : thread
-        the thread of the scene analysis process
+    scenes_process : process
+        the process of the scene analysis
 
     Methods
     -------
-    restart_thread()
-        restart the objects analysis thread
-    activate_thread()
-        activate the objects analysis thread
-    deactivate_thread()
-        deactivate the objects analysis thread
+    restart_process()
+        restart the objects analysis process
+    activate_process()
+        activate the objects analysis proces
+    deactivate_process()
+        deactivate the objects analysis process
 
     """
 
     # Signals
     progress = QtCore.pyqtSignal(int)
 
-    # Threads to wait
-    scenes_thread = None
+    # Processes to wait
+    scenes_process = None
 
-    def __init__(self, scenes_thread):
-        LOG.debug('initializing objects analysis thread')
+    def __init__(self, scenes_process):
+        LOG.debug('initializing objects analysis process')
         QThread.__init__(self)
         self.active = True
         self.restart = False
-        self.scenes_thread = scenes_thread
-        LOG.info('objects analysis thread initialized')
+        self.scenes_process = scenes_process
+        LOG.info('objects analysis process initialized')
 
     def run(self):
         """ Method that analysis the objects and save the objects dict in the ObjectsContext."""
@@ -73,10 +73,10 @@ class ObjectsAnalysis(QThread):
                 clip = load_video(path)
                 LOG.debug('original video loaded')
 
-            # Wait to the previous thread's finish
+            # Wait to the previous process' finish
             if self.active:
                 LOG.debug('waiting previous process')
-                self.scenes_thread.wait()
+                self.scenes_process.wait()
 
             # Load scenes list
             if self.active:
@@ -132,19 +132,19 @@ class ObjectsAnalysis(QThread):
             if not self.restart:
                 break
 
-    def restart_thread(self):
-        """ Method that restart the objects analysis thread."""
+    def restart_process(self):
+        """ Method that restart the objects analysis process."""
         self.active = False
         self.restart = True
         self.progress.emit(0)
-        LOG.info('objects analysis thread restart activate')
+        LOG.info('objects analysis process restart activate')
 
-    def activate_thread(self):
-        """ Method that activate the objects analysis thread."""
+    def activate_process(self):
+        """ Method that activate the objects analysis process."""
         self.active = True
-        LOG.info('objects analysis thread activate')
+        LOG.info('objects analysis process activate')
 
-    def deactivate_thread(self):
-        """ Method that deactivate the objects analysis thread."""
+    def deactivate_process(self):
+        """ Method that deactivate the objects analysis process."""
         self.active = False
-        LOG.info('objects analysis thread deactivate')
+        LOG.info('objects analysis process deactivate')

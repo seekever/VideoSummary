@@ -1,4 +1,4 @@
-""" The module for the scenes analysis thread."""
+""" The module for the scenes analysis process."""
 
 import logging
 import os
@@ -12,13 +12,13 @@ from video_summary.context.scenes_context import ScenesContext
 from video_summary.utils import load_video, get_time_from_line, get_sec_from_string
 
 # Logger
-LOGGER_NAME = 'App.Threads.SceneAnalysis'
+LOGGER_NAME = 'App.Processes.SceneAnalysis'
 LOG = logging.getLogger(LOGGER_NAME)
 
 
 class ScenesAnalysis(QThread):
     """
-    The scenes analysis thread.
+    The scenes analysis process.
 
     ...
 
@@ -29,12 +29,12 @@ class ScenesAnalysis(QThread):
 
     Methods
     -------
-    restart_thread()
-        restart the scenes analysis thread
-    activate_thread()
-        activate the scenes analysis thread
-    deactivate_thread()
-        deactivate the scenes analysis thread
+    restart_process()
+        restart the scenes analysis process
+    activate_process()
+        activate the scenes analysis process
+    deactivate_process()
+        deactivate the scenes analysis process
 
     """
 
@@ -42,11 +42,11 @@ class ScenesAnalysis(QThread):
     progress = QtCore.pyqtSignal(int)
 
     def __init__(self):
-        LOG.debug('initializing scene analysis thread')
+        LOG.debug('initializing scene analysis process')
         QThread.__init__(self)
         self.active = True
         self.restart = False
-        LOG.info('scenes analysis thread initialized')
+        LOG.info('scenes analysis process initialized')
 
     def run(self):
         """ Method that analysis the scenes and save the scenes list in the ScenesContext."""
@@ -113,19 +113,19 @@ class ScenesAnalysis(QThread):
             if not self.restart:
                 break
 
-    def restart_thread(self):
-        """ Method that restart the scenes analysis thread."""
-        self.deactivate_thread()
+    def restart_process(self):
+        """ Method that restart the scenes analysis process."""
+        self.deactivate_process()
         self.restart = True
         self.progress.emit(0)
-        LOG.info('scenes analysis thread restart activate')
+        LOG.info('scenes analysis process restart activate')
 
-    def activate_thread(self):
-        """ Method that activate the scenes analysis thread."""
+    def activate_process(self):
+        """ Method that activate the scenes analysis process."""
         self.active = True
-        LOG.info('scenes analysis thread activate')
+        LOG.info('scenes analysis process activate')
 
-    def deactivate_thread(self):
-        """ Method that deactivate the scenes analysis thread."""
+    def deactivate_process(self):
+        """ Method that deactivate the scenes analysis process."""
         self.active = False
-        LOG.info('scenes analysis thread deactivate')
+        LOG.info('scenes analysis process deactivate')
