@@ -2,6 +2,7 @@
 
 import logging
 
+import nltk
 import numpy as np
 from PyQt5 import QtCore
 from PyQt5.QtCore import QThread
@@ -80,6 +81,13 @@ class SubtitlesAnalysis(QThread):
             LOG.debug('starting subtitle analysis')
             self.active = True
             self.restart = False
+
+            # Check and download stopwords if necessary
+            if self.active:
+                try:
+                    nltk.data.find('corpora/stopwords.zip/stopwords')
+                except LookupError:
+                    nltk.download('stopwords')
 
             # Load, join and clean the original subtitles
             if self.active:
